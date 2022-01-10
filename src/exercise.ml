@@ -5,7 +5,7 @@ type equipment = Wall | PullUpBar | LowPullUpBar
 
 type exercise =
   { exercise_name : string
-  ; exercise_equipments : [equipment]
+  ; exercise_equipments : equipment list
   }
 
 let exercises = 
