@@ -1,5 +1,4 @@
 open Base
-open Stdio
 
 type equipment = Wall | PullUpBar | LowPullUpBar
 
@@ -8,7 +7,11 @@ type exercise =
   ; exercise_equipments : equipment list
   }
 
-let exercises = 
+type step = { step_equipments : equipment list }
+
+type circuit = { circuit_rounds : (step * exercise) list list }
+
+let all_exercises = 
   [ { exercise_name = "Strict Pullups"; exercise_equipments = [PullUpBar] }
   ; { exercise_name = "Chin-ups"; exercise_equipments = [PullUpBar] }
   ; { exercise_name = "Commando Pullups"; exercise_equipments = [PullUpBar] }
