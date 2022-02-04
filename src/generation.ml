@@ -1,12 +1,15 @@
 open Base
 open Model
 
-let drop_i ls i =
-  let rec helper acc ls' i' = match ls' with
+let drop_exercise exs ex =
+  let rec helper acc exs' = match exs' with
     | [] -> List.rev acc
-    | (_::xs) when (i' = 0) -> helper acc xs (i' - 1)
-    | (x::xs) -> helper (x::acc) xs (i' - 1)
-  in helper [] ls i
+    | (x::xs) when (phys_equal x ex) -> helper acc xs
+    | (x::xs) -> helper (x::acc) xs
+  in helper [] exs
+
+let valid_exercise_for_step step ex =
+  all (fun ex_eq -> List. ()) (exercise_equipments ex)
 
 let generate steps exercises nb_rounds =
   Random.self_init ();
@@ -17,9 +20,10 @@ let generate steps exercises nb_rounds =
         | ([], _)      -> helper (tmp_acc :: acc) [] steps exs (n - 1)
         | (_, [])      -> failwith "Not enough exercises to feed." (* ! *)
         | ((s::ss), _) ->
-          let nb_exs = List.length exs in
+          let valid_exercises = List.filter ~f:(valid_exercise_for_step s) exs in
+          let nb_exs = List.length valid_exercises in
           let i = Random.int nb_exs in
-          let ex = List.nth_exn exs i in
-          let rem_exs = drop_i exs i in
+          let ex = List.nth_exn valid_exercises i in
+          let rem_exs = drop_exercise exs ex in
           helper acc ((s, ex) :: tmp_acc) ss rem_exs nb_rounds
   in helper [] [] steps exercises nb_rounds
