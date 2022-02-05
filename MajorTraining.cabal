@@ -1,0 +1,32 @@
+cabal-version:       >= 1.10
+name:                Major Circuit Training
+version:             0.1.0.0
+-- synopsis:
+-- description:
+bug-reports:         https://github.com/TheLusitanianKing/MajorTraining/issues
+license:             MIT
+license-file:        LICENSE
+author:              TheLusitanianKing
+maintainer:          alexlusitanian@gmail.com
+copyright:           Alexandre Pais Gomes
+build-type:          Simple
+extra-source-files:  README.md
+
+executable major-training
+  main-is: Main.hs
+  build-depends:
+    base >= 4.15,
+    major-training-lib
+  ghc-options: -Wall
+  default-language: Haskell2010
+
+library major-training-lib
+  exposed-modules:
+    Generation,
+    Model
+  hs-source-dirs:
+    src
+  build-depends:
+    base >= 4.15
+  ghc-options: -Wall
+  default-language: Haskell2010
