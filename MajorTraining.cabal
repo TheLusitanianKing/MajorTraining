@@ -1,7 +1,7 @@
 cabal-version:       >= 1.10
-name:                Major Circuit Training
+name:                MajorTraining
 version:             0.1.0.0
--- synopsis:
+synopsis:            Circuit training generator
 -- description:
 bug-reports:         https://github.com/TheLusitanianKing/MajorTraining/issues
 license:             MIT

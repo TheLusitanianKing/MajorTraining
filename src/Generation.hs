@@ -1,9 +1,9 @@
 module Generation where
 
-import Model (Exercise, Step)
+import Model
 
-generateCircuit :: [Step] -> [Exercise] -> Int
-generateCircuit = undefined
+generateCircuit :: [Exercise] -> Int -> Circuit -> GeneratedCircuit
+generateCircuit exs nbRounds circuit = undefined
 
 -- let generate steps exercises nb_rounds =
 --   Random.self_init ();
