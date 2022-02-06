@@ -1,9 +1,17 @@
-module Generation where
+module Generation 
+  ( generateCircuit
+  )
+where
 
 import Model
+import System.Random
 
-generateCircuit :: [Exercise] -> Int -> Circuit -> GeneratedCircuit
-generateCircuit exs nbRounds circuit = undefined
+generateCircuit :: StdGen -> [Exercise] -> Int -> Circuit -> GeneratedCircuit
+generateCircuit gen exs nbRounds circuit = undefined
+  where
+    helper acc tmp exs steps 0 = GeneratedCircuit { circuit = undefined, rounds = undefined }
+    helper acc tmp exs steps n = undefined
+    
 
 -- let generate steps exercises nb_rounds =
 --   Random.self_init ();

@@ -1,6 +1,17 @@
-module Model where
+{-# LANGUAGE OverloadedStrings #-}
+
+module Model
+  ( Equipment(..)
+  , Exercise(..)
+  , Step(..)
+  , Circuit(..)
+  , GeneratedCircuit(..)
+  , allExercises
+  )
+where
 
 import Data.List.NonEmpty (NonEmpty)
+import Data.Text (Text)
 
 import qualified Data.List.NonEmpty as NE
 
@@ -8,7 +19,7 @@ import qualified Data.List.NonEmpty as NE
 data Equipment = Wall | PullUpBar | LowPullUpBar
 
 data Exercise = Exercise
-  { exerciseName :: String
+  { exerciseName :: Text
   , exerciseEquipments :: [Equipment]
   } 
 
