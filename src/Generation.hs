@@ -7,11 +7,11 @@ import Model
 import System.Random
 
 generateCircuit :: StdGen -> [Exercise] -> Int -> Circuit -> GeneratedCircuit
-generateCircuit gen exs nbRounds circuit = undefined
+generateCircuit gen exs nbRounds c =
+  helper [[]] [] exs (circuitSteps c) gen nbRounds
   where
-    helper acc tmp exs steps 0 = GeneratedCircuit { circuit = undefined, rounds = undefined }
-    helper acc tmp exs steps n = undefined
-    
+    helper acc tmp es steps g 0 = GeneratedCircuit { circuit = c, rounds = undefined }
+    helper acc tmp es steps g n = undefined
 
 -- let generate steps exercises nb_rounds =
 --   Random.self_init ();
