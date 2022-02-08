@@ -3,9 +3,9 @@
 module Model
   ( Equipment(..)
   , Exercise(..)
-  , Step(..)
   , Circuit(..)
   , GeneratedCircuit(..)
+  , Step(..)
   , allExercises
   )
 where
@@ -15,7 +15,6 @@ import Data.List.NonEmpty (NonEmpty)
 import Data.Set (Set)
 import Data.Text (Text)
 
-import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as Set
 
 

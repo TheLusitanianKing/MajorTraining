@@ -5,7 +5,7 @@ where
 
 
 import Data.Set (Set)
-import Model (GeneratedCircuit(..), Circuit(..), Exercise(..))
+import Model (Circuit(..), Exercise(..), GeneratedCircuit(..))
 import System.Random (Random(randomR), StdGen)
 
 import qualified Data.List.NonEmpty as NE
