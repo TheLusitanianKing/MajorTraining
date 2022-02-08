@@ -1,15 +1,15 @@
-cabal-version:       >= 1.10
-name:                MajorTraining
-version:             0.1.0.0
-synopsis:            Circuit training generator
-bug-reports:         https://github.com/TheLusitanianKing/MajorTraining/issues
-license:             MIT
-license-file:        LICENSE
-author:              TheLusitanianKing
-maintainer:          alexlusitanian@gmail.com
-copyright:           Alexandre Pais Gomes
-build-type:          Simple
-extra-source-files:  README.md
+cabal-version:      >= 1.10
+name:               MajorTraining
+version:            0.1.0.0
+synopsis:           Circuit training generator
+bug-reports:        https://github.com/TheLusitanianKing/MajorTraining/issues
+license:            MIT
+license-file:       LICENSE
+author:             TheLusitanianKing
+maintainer:         alexlusitanian@gmail.com
+copyright:          Alexandre Pais Gomes
+build-type:         Simple
+extra-source-files: README.md
 
 executable major-training
   main-is: Main.hs
@@ -31,5 +31,20 @@ library major-training-lib
     containers >= 0.6.4,
     random >= 1.2.0,
     text >= 1.2.5
+  ghc-options: -Wall
+  default-language: Haskell2010
+
+test-suite test
+  type: exitcode-stdio-1.0
+  main-is: Tests.hs
+  hs-source-dirs:
+    tests, tests/test-cases
+  other-modules:
+    TestGeneration
+  build-depends:
+    base >= 4.15,
+    QuickCheck >= 2.14.2,
+    hspec >= 2.7.4,
+    major-training-lib
   ghc-options: -Wall
   default-language: Haskell2010
