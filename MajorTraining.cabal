@@ -2,7 +2,6 @@ cabal-version:       >= 1.10
 name:                MajorTraining
 version:             0.1.0.0
 synopsis:            Circuit training generator
--- description:
 bug-reports:         https://github.com/TheLusitanianKing/MajorTraining/issues
 license:             MIT
 license-file:        LICENSE
@@ -14,6 +13,7 @@ extra-source-files:  README.md
 
 executable major-training
   main-is: Main.hs
+  hs-source-dirs: src
   build-depends:
     base >= 4.15,
     random >= 1.2.0,
@@ -25,10 +25,10 @@ library major-training-lib
   exposed-modules:
     Generation,
     Model
-  hs-source-dirs:
-    src
+  hs-source-dirs: src/lib
   build-depends:
     base >= 4.15,
+    containers >= 0.6.4,
     random >= 1.2.0,
     text >= 1.2.5
   ghc-options: -Wall
