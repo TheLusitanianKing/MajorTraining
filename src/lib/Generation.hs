@@ -13,25 +13,33 @@ import qualified Data.Set as Set
 
 
 generateCircuit :: StdGen -> Set Exercise -> Int -> Circuit -> Either String GeneratedCircuit
-generateCircuit gen exs nbRounds c =
-  helper [] [] exs (_circuitSteps c) gen nbRounds
-  where
-    helper acc tmp es steps g n
-      | n == 0      =
-        case acc of
-          [] -> Left "No rounds generated."
-          _  -> Right $ GeneratedCircuit { _circuit = c, _rounds = NE.fromList (reverse acc) }
-      | Set.null es = Left "Not enough exercises to generate the circuit."
-      | null steps  = helper (NE.fromList (reverse tmp):acc) [] es (_circuitSteps c) g (n - 1)
-      | otherwise   =
-        let
-          currentStep = head steps
-          validExercises = Set.filter (stepCanHaveThisExercise currentStep) es
-          nbExs = length validExercises
-          (i, g') = randomR (0, nbExs - 1) g
-          pickedExercise = Set.toList validExercises !! i
-          remExs = es `Set.difference` Set.fromList [pickedExercise]
-        in helper acc (pickedExercise:tmp) remExs (tail steps) g' n
+generateCircuit gen exs nbRounds c
+  | null sts = Left "Empty circuit given."
+  | otherwise =
+    helper [] [] exs sts gen nbRounds
+    where
+      sts = _circuitSteps c 
+      helper acc tmp es steps g n
+        | n == 0      =
+          case acc of
+            [] -> Left "No rounds generated."
+            _  -> Right $ GeneratedCircuit { _circuit = c, _rounds = NE.fromList (reverse acc) }
+        | Set.null es = Left "Not enough exercises to generate the circuit."
+        | null steps  = helper (NE.fromList (reverse tmp):acc) [] es (_circuitSteps c) g (n - 1)
+        | otherwise   =
+          let
+            currentStep = head steps
+            validExercises = Set.filter (stepCanHaveThisExercise currentStep) es
+            nbExs = length validExercises
+          in -- TODO: avoid that ugly staircase
+            case nbExs of
+              0 -> Left "No more valid exercises for the step."
+              _ ->
+                let
+                  (i, g') = randomR (0, nbExs - 1) g
+                  pickedExercise = Set.toList validExercises !! i
+                  remExs = es `Set.difference` Set.fromList [pickedExercise]
+                in helper acc (pickedExercise:tmp) remExs (tail steps) g' n
 
 stepCanHaveThisExercise :: Step -> Exercise -> Bool
 stepCanHaveThisExercise s e = _exerciseEquipments e `Set.isSubsetOf` _stepEquipments s

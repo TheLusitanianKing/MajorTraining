@@ -7,6 +7,7 @@ module Model
   , GeneratedCircuit(..)
   , Step(..)
   , allExercises
+  , nbPickedExercises
   )
 where
 
@@ -15,6 +16,7 @@ import Data.List.NonEmpty (NonEmpty)
 import Data.Set (Set)
 import Data.Text (Text)
 
+import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as Set
 
 
@@ -75,3 +77,7 @@ allExercises = Set.fromList
   , Exercise { _exerciseName = "Squat Jumps", _exerciseEquipments = Set.empty }
   , Exercise { _exerciseName = "Standups", _exerciseEquipments = Set.empty }
   ]
+
+nbPickedExercises :: GeneratedCircuit -> Int
+nbPickedExercises gc = length $ concatMap NE.toList pickedExercises
+  where pickedExercises = _rounds gc
