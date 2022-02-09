@@ -1,5 +1,4 @@
-import Test.Hspec
-import Test.QuickCheck
+import Test.Hspec (hspec)
 import TestGeneration (generationTests)
 
 main :: IO ()

@@ -26,17 +26,17 @@ data Exercise = Exercise
   , _exerciseEquipments :: Set Equipment
   } deriving (Ord, Eq)
 
-newtype Step = Step { stepEquipments :: Set Equipment }
+newtype Step = Step { _stepEquipments :: Set Equipment }
 
-newtype Circuit = Circuit { circuitSteps :: [Step] }
+newtype Circuit = Circuit { _circuitSteps :: [Step] }
 
 data GeneratedCircuit = GeneratedCircuit
   { _circuit :: Circuit
   , _rounds :: NonEmpty (NonEmpty Exercise)
   }
 
-allExercises :: [Exercise]
-allExercises = 
+allExercises :: Set Exercise
+allExercises = Set.fromList
   [ Exercise { _exerciseName = "Strict Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }
   , Exercise { _exerciseName = "Chin-ups", _exerciseEquipments = Set.fromList [PullUpBar] }
   , Exercise { _exerciseName = "Commando Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }

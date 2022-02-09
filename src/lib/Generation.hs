@@ -5,7 +5,7 @@ where
 
 
 import Data.Set (Set)
-import Model (Circuit(..), Exercise(..), GeneratedCircuit(..))
+import Model (Circuit(..), Exercise(..), GeneratedCircuit(..), Step (_stepEquipments))
 import System.Random (Random(randomR), StdGen)
 
 import qualified Data.List.NonEmpty as NE
@@ -14,7 +14,7 @@ import qualified Data.Set as Set
 
 generateCircuit :: StdGen -> Set Exercise -> Int -> Circuit -> Either String GeneratedCircuit
 generateCircuit gen exs nbRounds c =
-  helper [] [] exs (circuitSteps c) gen nbRounds
+  helper [] [] exs (_circuitSteps c) gen nbRounds
   where
     helper acc tmp es steps g n
       | n == 0      =
@@ -22,12 +22,16 @@ generateCircuit gen exs nbRounds c =
           [] -> Left "No rounds generated."
           _  -> Right $ GeneratedCircuit { _circuit = c, _rounds = NE.fromList (reverse acc) }
       | Set.null es = Left "Not enough exercises to generate the circuit."
-      | null steps  = helper (NE.fromList (reverse tmp):acc) [] es (circuitSteps c) g (n - 1)
+      | null steps  = helper (NE.fromList (reverse tmp):acc) [] es (_circuitSteps c) g (n - 1)
       | otherwise   =
         let
-          validExercises = Set.filter undefined es
+          currentStep = head steps
+          validExercises = Set.filter (stepCanHaveThisExercise currentStep) es
           nbExs = length validExercises
-          (i, g') = randomR (0, nbExs) g
+          (i, g') = randomR (0, nbExs - 1) g
           pickedExercise = Set.toList validExercises !! i
           remExs = es `Set.difference` Set.fromList [pickedExercise]
         in helper acc (pickedExercise:tmp) remExs (tail steps) g' n
+
+stepCanHaveThisExercise :: Step -> Exercise -> Bool
+stepCanHaveThisExercise s e = _exerciseEquipments e `Set.isSubsetOf` _stepEquipments s
