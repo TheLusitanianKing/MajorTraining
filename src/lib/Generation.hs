@@ -17,7 +17,10 @@ generateCircuit gen exs nbRounds c =
   helper [] [] exs (circuitSteps c) gen nbRounds
   where
     helper acc tmp es steps g n
-      | n == 0      = Right $ GeneratedCircuit { circuit = c, rounds = NE.fromList (reverse acc) }
+      | n == 0      =
+        case acc of
+          [] -> Left "No rounds generated."
+          _  -> Right $ GeneratedCircuit { _circuit = c, _rounds = NE.fromList (reverse acc) }
       | Set.null es = Left "Not enough exercises to generate the circuit."
       | null steps  = helper (NE.fromList (reverse tmp):acc) [] es (circuitSteps c) g (n - 1)
       | otherwise   =

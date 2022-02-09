@@ -22,8 +22,8 @@ data Equipment = Wall | PullUpBar | LowPullUpBar
   deriving (Ord, Eq)
 
 data Exercise = Exercise
-  { exerciseName :: Text
-  , exerciseEquipments :: Set Equipment
+  { _exerciseName :: Text
+  , _exerciseEquipments :: Set Equipment
   } deriving (Ord, Eq)
 
 newtype Step = Step { stepEquipments :: Set Equipment }
@@ -31,47 +31,47 @@ newtype Step = Step { stepEquipments :: Set Equipment }
 newtype Circuit = Circuit { circuitSteps :: [Step] }
 
 data GeneratedCircuit = GeneratedCircuit
-  { circuit :: Circuit
-  , rounds :: NonEmpty (NonEmpty Exercise)
+  { _circuit :: Circuit
+  , _rounds :: NonEmpty (NonEmpty Exercise)
   }
 
 allExercises :: [Exercise]
 allExercises = 
-  [ Exercise { exerciseName = "Strict Pullups", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Chin-ups", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Commando Pullups", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Towel Pullups", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Dips", exerciseEquipments = Set.fromList [LowPullUpBar] }
-  , Exercise { exerciseName = "Burpees Pullups", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Toes-to-bar", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Full Hanging Leg Wipers", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Hanging Knee Wipers", exerciseEquipments = Set.fromList [PullUpBar] }
-  , Exercise { exerciseName = "Burpees", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Burpee-Squat-Jump", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Calf Raises", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Climbers", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Froggers", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Supermen", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Hip Raises", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Pikes", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Strict Pushups", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Diamond Pushups", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Handstand Pushups", exerciseEquipments = Set.fromList [Wall] }
-  , Exercise { exerciseName = "One-Handed Pushups", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Sphinx Pushups", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Spiderman Pushups", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Jackknives", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Leg Raises", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Leg Wipers", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Situps", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Plank", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Toe-Touch Crunches", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Twists", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Knee Jumps", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Wall Walks", exerciseEquipments = Set.fromList [Wall] }
-  , Exercise { exerciseName = "Lunges", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Squats", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Pistols", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Squat Jumps", exerciseEquipments = Set.empty }
-  , Exercise { exerciseName = "Standups", exerciseEquipments = Set.empty }
+  [ Exercise { _exerciseName = "Strict Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Chin-ups", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Commando Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Towel Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Dips", _exerciseEquipments = Set.fromList [LowPullUpBar] }
+  , Exercise { _exerciseName = "Burpees Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Toes-to-bar", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Full Hanging Leg Wipers", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Hanging Knee Wipers", _exerciseEquipments = Set.fromList [PullUpBar] }
+  , Exercise { _exerciseName = "Burpees", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Burpee-Squat-Jump", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Calf Raises", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Climbers", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Froggers", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Supermen", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Hip Raises", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Pikes", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Strict Pushups", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Diamond Pushups", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Handstand Pushups", _exerciseEquipments = Set.fromList [Wall] }
+  , Exercise { _exerciseName = "One-Handed Pushups", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Sphinx Pushups", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Spiderman Pushups", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Jackknives", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Leg Raises", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Leg Wipers", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Situps", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Plank", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Toe-Touch Crunches", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Twists", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Knee Jumps", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Wall Walks", _exerciseEquipments = Set.fromList [Wall] }
+  , Exercise { _exerciseName = "Lunges", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Squats", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Pistols", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Squat Jumps", _exerciseEquipments = Set.empty }
+  , Exercise { _exerciseName = "Standups", _exerciseEquipments = Set.empty }
   ]
