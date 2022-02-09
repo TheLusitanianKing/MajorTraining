@@ -1,7 +1,7 @@
 module TestGeneration where
 
 import Data.Set (Set)
-import Data.Either (isLeft)
+import Data.Either (isLeft, isRight)
 import Model (Circuit(..), Step(..), Exercise(..), allExercises)
 import Generation (generateCircuit)
 import System.Random (StdGen, mkStdGen)
@@ -26,7 +26,7 @@ generationTests = do
       let
         littleSetOfExercises = Set.fromList . take 10 . Set.toList $ noEquipmentExercises
         generatedCircuit = generateCircuit gen littleSetOfExercises 3 threeStepWithoutEquipmentsCircuit
-      in isLeft generatedCircuit `shouldBe` True
+      in isRight generatedCircuit `shouldBe` True
     
     describe "Generating X rounds on the Y steps circuit." $ do
       it "X steps Y rounds = X*Y total exercises." $ do
