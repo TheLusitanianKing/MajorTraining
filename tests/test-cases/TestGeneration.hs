@@ -37,9 +37,6 @@ generationTests = do
           if x >= 0 && y >= 0
             then assertHaveXExercises (x*y) $ generateCircuit gen allExercises y (circuitWithEmptySteps x)
             else assertBool "" True -- TODO: see how to force x and y to be natural numbers
-      
-      it "X steps Y rounds = X exercises x Y rounds" $ do
-        pending
 
 circuitWithEmptySteps :: Int -> Circuit
 circuitWithEmptySteps nbSteps = Circuit
