@@ -28,15 +28,6 @@ data Exercise = Exercise
   , _exerciseEquipments :: Set Equipment
   } deriving (Ord, Eq)
 
-newtype Step = Step { _stepEquipments :: Set Equipment }
-
-newtype Circuit = Circuit { _circuitSteps :: [Step] }
-
-data GeneratedCircuit = GeneratedCircuit
-  { _circuit :: Circuit
-  , _rounds :: NonEmpty (NonEmpty Exercise)
-  }
-
 allExercises :: Set Exercise
 allExercises = Set.fromList
   [ Exercise { _exerciseName = "Strict Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }
@@ -78,6 +69,16 @@ allExercises = Set.fromList
   , Exercise { _exerciseName = "Standups", _exerciseEquipments = Set.empty }
   ]
 
+newtype Step = Step { _stepEquipments :: Set Equipment }
+
+newtype Circuit = Circuit { _circuitSteps :: [Step] }
+
+data GeneratedCircuit = GeneratedCircuit
+  { _circuit :: Circuit
+  , _rounds :: NonEmpty (NonEmpty Exercise)
+  }
+
+-- | Get the total number of exercises from a generated circuit
 nbPickedExercises :: GeneratedCircuit -> Int
 nbPickedExercises gc = length $ concatMap NE.toList pickedExercises
   where pickedExercises = _rounds gc

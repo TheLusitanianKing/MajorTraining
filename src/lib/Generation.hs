@@ -12,6 +12,7 @@ import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as Set
 
 
+-- | Generate a circuit from its steps, a set of exercises to use, a number of round to generate and a generator
 generateCircuit :: StdGen -> Set Exercise -> Int -> Circuit -> Either String GeneratedCircuit
 generateCircuit gen exs nbRounds c
   | null sts = Left "Empty circuit given."
@@ -41,5 +42,6 @@ generateCircuit gen exs nbRounds c
                   remExs = es `Set.difference` Set.fromList [pickedExercise]
                 in helper acc (pickedExercise:tmp) remExs (tail steps) g' n
 
+-- | Check if the given step can have the given exercise assigned to it
 stepCanHaveThisExercise :: Step -> Exercise -> Bool
 stepCanHaveThisExercise s e = _exerciseEquipments e `Set.isSubsetOf` _stepEquipments s

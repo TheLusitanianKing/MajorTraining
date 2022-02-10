@@ -22,5 +22,8 @@ modelTests = do
                 (NE.fromList [NE.fromList [sampleExercise], NE.fromList [sampleExercise]])
       x `shouldBe` 2
 
-sampleCircuit = undefined
-sampleExercise = undefined
+sampleCircuit :: Circuit
+sampleCircuit = undefined -- I don't even need to define this
+
+sampleExercise :: Exercise 
+sampleExercise = undefined -- or this: lazy evaluation for the win
