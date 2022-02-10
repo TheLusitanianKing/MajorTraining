@@ -1,4 +1,15 @@
 module Main where
 
+
+import Brick
+import Model
+import TUI
+
+
 main :: IO ()
-main = putStrLn "It does nothing at the moment."
+main = do
+  -- finalState <- defaultMain app initialCircuit
+  putStrLn "Ain't doing anything yet."
+
+initialCircuit :: Circuit
+initialCircuit = Circuit []

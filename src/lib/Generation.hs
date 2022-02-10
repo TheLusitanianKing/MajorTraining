@@ -19,7 +19,7 @@ generateCircuit gen exs nbRounds c
   | otherwise =
     helper [] [] exs sts gen nbRounds
     where
-      sts = _circuitSteps c 
+      sts = _circuitSteps c
       helper acc tmp es steps g n
         | n == 0      =
           case acc of
