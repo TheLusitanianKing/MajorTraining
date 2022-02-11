@@ -18,7 +18,10 @@ app = M.App
   }
 
 drawUI :: Circuit -> [T.Widget ()]
-drawUI = undefined
+drawUI = map drawStep . _circuitSteps
+
+drawStep :: Step -> T.Widget ()
+drawStep = undefine
 
 appEvent :: Circuit -> T.BrickEvent () e -> T.EventM () (T.Next Circuit)
 appEvent = undefined
