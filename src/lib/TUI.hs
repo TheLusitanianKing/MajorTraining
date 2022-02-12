@@ -8,7 +8,7 @@ import qualified Brick.Main as M
 import qualified Brick.Types as T
 
 
-app :: M.App Circuit e ()
+app :: M.App AppState e ()
 app = M.App
   { M.appDraw = drawUI
   , M.appChooseCursor = M.showFirstCursor
@@ -17,13 +17,13 @@ app = M.App
   , M.appAttrMap = const attrMap
   }
 
-drawUI :: Circuit -> [T.Widget ()]
-drawUI = map drawStep . _circuitSteps
+drawUI :: AppState -> [T.Widget ()]
+drawUI = map drawStep . _circuitSteps . _apCircuit
 
 drawStep :: Step -> T.Widget ()
-drawStep = undefine
+drawStep = undefined
 
-appEvent :: Circuit -> T.BrickEvent () e -> T.EventM () (T.Next Circuit)
+appEvent :: AppState -> T.BrickEvent () e -> T.EventM () (T.Next AppState)
 appEvent = undefined
 
 attrMap :: A.AttrMap
