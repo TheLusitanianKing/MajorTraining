@@ -80,7 +80,7 @@ data GeneratedCircuit = GeneratedCircuit
   }
 
 newtype AppState = AppState
-  { _apCircuit :: Circuit
+  { _apsCircuit :: Circuit
   }
 
 -- | Get the total number of exercises from a generated circuit

@@ -18,7 +18,7 @@ app = M.App
   }
 
 drawUI :: AppState -> [T.Widget ()]
-drawUI = map drawStep . _circuitSteps . _apCircuit
+drawUI = map drawStep . _circuitSteps . _apsCircuit
 
 drawStep :: Step -> T.Widget ()
 drawStep = undefined
