@@ -1,8 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Model
-  ( AppState(..)
-  , Equipment(..)
+  ( Equipment(..)
   , Exercise(..)
   , Circuit(..)
   , GeneratedCircuit(..)
@@ -77,10 +76,6 @@ newtype Circuit = Circuit { _circuitSteps :: [Step] }
 data GeneratedCircuit = GeneratedCircuit
   { _circuit :: Circuit
   , _rounds :: NonEmpty (NonEmpty Exercise)
-  }
-
-newtype AppState = AppState
-  { _apsCircuit :: Circuit
   }
 
 -- | Get the total number of exercises from a generated circuit
