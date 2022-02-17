@@ -18,6 +18,7 @@ executable major-training
     base >= 4.15,
     brick >= 0.67,
     random >= 1.2.0,
+    text >= 1.2.5,
     vty >= 5.33,
     major-training-lib
   ghc-options: -threaded -Wall
