@@ -12,8 +12,7 @@ jobs:
     - uses: haskell/actions/setup@v1
       with:
         ghc-version: '8.10.3'
-        enable-stack: true
-        stack-version: 'latest'
+        cabal-version: 'latest'
 
     - name: Dependencies
       run: |
