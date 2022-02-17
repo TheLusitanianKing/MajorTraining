@@ -1,4 +1,4 @@
-module TestModel where
+module ModelSpec (spec) where
 
 
 import Model
@@ -7,8 +7,8 @@ import Test.Hspec
 import qualified Data.List.NonEmpty as NE
 
 
-modelTests :: Spec
-modelTests = do
+spec :: Spec
+spec = do
   describe "Getting number of exercises inside a generated circuit." $ do
     it "Has four" $ do
       let x = nbPickedExercises $

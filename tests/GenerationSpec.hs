@@ -1,4 +1,4 @@
-module TestGeneration where
+module GenerationSpec (spec) where
 
 
 import Data.Set (Set)
@@ -13,8 +13,8 @@ import Test.Hspec.QuickCheck (prop)
 import qualified Data.Set as Set
 
 
-generationTests :: Spec
-generationTests = do
+spec :: Spec
+spec = do
   describe "Circuit generation." $ do
     prop "Check it fails if there is no exercises to generate from." $ do
       \n -> isLeft (generateCircuit gen Set.empty n (circuitWithEmptySteps 3)) `shouldBe` True

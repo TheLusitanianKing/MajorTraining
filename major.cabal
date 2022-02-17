@@ -1,5 +1,5 @@
 cabal-version:      >= 1.10
-name:               MajorTraining
+name:               major
 version:            0.1.0.0
 synopsis:           Circuit training generator
 bug-reports:        https://github.com/TheLusitanianKing/MajorTraining/issues
@@ -11,24 +11,13 @@ copyright:          Alexandre Pais Gomes
 build-type:         Simple
 extra-source-files: README.md
 
-executable major-training
-  main-is: Main.hs
-  hs-source-dirs: src
-  build-depends:
-    base >= 4.15,
-    brick >= 0.67,
-    random >= 1.2.0,
-    text >= 1.2.5,
-    vty >= 5.33,
-    major-training-lib
-  ghc-options: -threaded -Wall
-  default-language: Haskell2010
-
-library major-training-lib
+library
   exposed-modules:
     Generation,
     Model,
     TUI
+  other-modules:
+    Paths_major
   hs-source-dirs: src/lib
   build-depends:
     base >= 4.15,
@@ -40,21 +29,39 @@ library major-training-lib
   ghc-options: -Wall
   default-language: Haskell2010
 
-test-suite test
-  type: exitcode-stdio-1.0
-  main-is: Tests.hs
-  hs-source-dirs:
-    tests, tests/test-cases
+executable major
+  main-is: Main.hs
+  hs-source-dirs: src
+  build-depends:
+    base >= 4.15,
+    brick >= 0.67,
+    random >= 1.2.0,
+    text >= 1.2.5,
+    vty >= 5.33,
+    major
   other-modules:
-    TestModel,
-    TestGeneration
+    Paths_major
+  ghc-options: -threaded -Wall
+  default-language: Haskell2010
+
+test-suite major-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  hs-source-dirs:
+    tests
+  other-modules:
+    GenerationSpec
+    ModelSpec
+    Paths_major
   build-depends:
     base >= 4.15,
     containers >= 0.6.4,
     QuickCheck >= 2.14.2,
     hspec >= 2.7.4,
+    hspec-discover >= 2.9.4,
     HUnit >= 1.6.2,
     random >= 1.2.0,
-    major-training-lib
+    major
   ghc-options: -Wall
   default-language: Haskell2010
+  build-tool-depends: hspec-discover:hspec-discover >= 2.9.4
