@@ -15,7 +15,11 @@ jobs:
         enable-stack: true
         stack-version: 'latest'
 
+    - name: Preparing
+      run: |
+        cabal update
+        cabal clean
+
     - name: Unit tests
       run: |
-        cabal clean
         cabal test --test-show-details=direct
