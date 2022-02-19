@@ -23,6 +23,11 @@ import qualified Data.Set as Set
 data Equipment = Wall | PullUpBar | LowPullUpBar
   deriving (Ord, Eq)
 
+instance Show Equipment where
+  show Wall = "Wall"
+  show PullUpBar = "Pull-up Bar"
+  show LowPullUpBar = "Low Pull-up Bar"
+
 data Exercise = Exercise
   { _exerciseName :: Text
   , _exerciseEquipments :: Set Equipment
