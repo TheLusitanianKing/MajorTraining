@@ -14,7 +14,7 @@ data AppState = AppState
   }
 
 data Name
-  = SelectedStep Int
+  = SelectedStep (Int, Int) -- (step index, equipment index)
   | AddStep
   | RemoveStep
   | Validate
