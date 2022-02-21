@@ -1,15 +1,13 @@
 module Main where
 
 
-import Brick
-import Model
 import TUI
+
+
+import qualified Brick.Main as M
 
 
 main :: IO ()
 main = do
-  -- finalState <- defaultMain app initialCircuit
-  putStrLn "Ain't doing anything yet."
-
-initialCircuit :: Circuit
-initialCircuit = Circuit []
+  finalState <- M.defaultMain app initialAppState 
+  putStrLn $ "final state: " <> show finalState

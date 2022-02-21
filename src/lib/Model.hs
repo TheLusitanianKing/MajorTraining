@@ -75,8 +75,10 @@ allExercises = Set.fromList
   ]
 
 newtype Step = Step { _stepEquipments :: Set Equipment }
+  deriving (Show)
 
 newtype Circuit = Circuit { _circuitSteps :: [Step] }
+  deriving (Show)
 
 data GeneratedCircuit = GeneratedCircuit
   { _circuit :: Circuit

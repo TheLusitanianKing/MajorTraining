@@ -1,16 +1,37 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module TUI where
 
 
 import Model
 
-import qualified Brick.AttrMap as A
-import qualified Brick.Focus as F
-import qualified Brick.Main as M
-import qualified Brick.Types as T
+import Brick.Widgets.Core
+
+import qualified Brick.AttrMap              as A
+import qualified Brick.Widgets.Border       as B
+import qualified Brick.Widgets.Border.Style as BS
+import qualified Brick.Widgets.Center       as C
+import qualified Brick.Focus                as F
+import qualified Brick.Main                 as M
+import qualified Brick.Types                as T
+import qualified Brick.Util                 as U
+import qualified Graphics.Vty               as V
+
+import qualified Data.Set                   as Set
+
 
 data AppState = AppState
   { _apsCircuit   :: Circuit
   , _apsFocusRing :: F.FocusRing Name
+  }
+
+instance Show AppState where
+  show st = "AppState Circuit: " <> show (_apsCircuit st)
+
+initialAppState :: AppState
+initialAppState = AppState
+  { _apsCircuit = Circuit [Step Set.empty, Step Set.empty]
+  , _apsFocusRing = undefined -- we don't even care for now
   }
 
 data Name
@@ -18,7 +39,7 @@ data Name
   | AddStep
   | RemoveStep
   | Validate
-  deriving (Show)
+  deriving (Eq, Ord, Show)
 
 app :: M.App AppState e Name
 app = M.App
@@ -30,13 +51,26 @@ app = M.App
   }
 
 drawUI :: AppState -> [T.Widget Name]
-drawUI = map drawStep . _circuitSteps . _apsCircuit
+drawUI as = [ui]
+  where
+    steps = map drawStep . _circuitSteps . _apsCircuit $ as
+    ui = hBox steps <=> str "THIS IS A DESCRIPTION"
 
 drawStep :: Step -> T.Widget Name
-drawStep = undefined
+drawStep _ =
+  -- let equipments = undefined in
+  withBorderStyle BS.ascii $
+  B.borderWithLabel (str "Step") $
+  vLimitPercent 30 $
+  C.vCenter $
+  str "THIS IS JUST ANOTHER STEP"
 
 appEvent :: AppState -> T.BrickEvent Name e -> T.EventM Name (T.Next AppState)
-appEvent = undefined
+appEvent st (T.VtyEvent ev) =
+  case ev of
+    V.EvKey V.KEsc [] -> M.halt st
+    _ -> M.continue st
+appEvent st _ = M.continue st
 
 attrMap :: A.AttrMap
-attrMap = undefined
+attrMap = A.attrMap V.defAttr []
