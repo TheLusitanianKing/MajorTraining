@@ -54,7 +54,11 @@ drawUI :: AppState -> [T.Widget Name]
 drawUI as = [ui]
   where
     steps = map drawStep . _circuitSteps . _apsCircuit $ as
-    ui = hBox steps <=> str "THIS IS A DESCRIPTION"
+    ui =
+      hBox steps <=>
+      str "Press n to go to the next step" <=>
+      str "Press + or p to add a step" <=>
+      str "Press Enter or v to start the generation"
 
 drawStep :: Step -> T.Widget Name
 drawStep step =
@@ -74,12 +78,13 @@ drawStep step =
     map drawSelection selection
 
 drawSelection :: (Equipment, Bool) -> T.Widget Name
-drawSelection (e, False) =
+drawSelection (e, selected) =
+  let
+    icone = if selected then "✓" else "✕"
+    attr  = if selected then "success" else "failure"
+  in
   padLeftRight 2 $
-  withAttr "failure" (str "✕") <+> padLeft (T.Pad 2) (str $ show e)
-drawSelection (e, True) =
-  padLeftRight 2 $
-  withAttr "success" (str "✓") <+> padLeft (T.Pad 2) (str $ show e)
+  withAttr attr (str icone) <+> padLeft (T.Pad 2) (str $ show e)
 
 appEvent :: AppState -> T.BrickEvent Name e -> T.EventM Name (T.Next AppState)
 appEvent st (T.VtyEvent ev) =
