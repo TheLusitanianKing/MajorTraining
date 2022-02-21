@@ -3,8 +3,8 @@
 module TUI where
 
 
+import Data.Set (Set)
 import Model
-
 import Brick.Widgets.Core
 
 import qualified Brick.AttrMap              as A
@@ -57,13 +57,29 @@ drawUI as = [ui]
     ui = hBox steps <=> str "THIS IS A DESCRIPTION"
 
 drawStep :: Step -> T.Widget Name
-drawStep _ =
-  -- let equipments = undefined in
+drawStep step =
+  let
+    equipments :: Set Equipment
+    equipments = _stepEquipments step
+    allEquipments :: [Equipment]
+    allEquipments = [minBound..maxBound]
+    selection :: [(Equipment, Bool)]
+    selection = map (\e -> (e, e `Set.member` equipments)) allEquipments
+  in
   withBorderStyle BS.ascii $
   B.borderWithLabel (str "Step") $
   vLimitPercent 30 $
   C.vCenter $
-  str "THIS IS JUST ANOTHER STEP"
+  vBox $
+    map drawSelection selection
+
+drawSelection :: (Equipment, Bool) -> T.Widget Name
+drawSelection (e, False) =
+  padLeftRight 2 $
+  withAttr "failure" (str "✕") <+> padLeft (T.Pad 2) (str $ show e)
+drawSelection (e, True) =
+  padLeftRight 2 $
+  withAttr "success" (str "✓") <+> padLeft (T.Pad 2) (str $ show e)
 
 appEvent :: AppState -> T.BrickEvent Name e -> T.EventM Name (T.Next AppState)
 appEvent st (T.VtyEvent ev) =
@@ -73,4 +89,7 @@ appEvent st (T.VtyEvent ev) =
 appEvent st _ = M.continue st
 
 attrMap :: A.AttrMap
-attrMap = A.attrMap V.defAttr []
+attrMap = A.attrMap V.defAttr
+  [ ("success", U.fg V.green)
+  , ("failure", U.fg V.red)
+  ]

@@ -21,7 +21,7 @@ import qualified Data.Set as Set
 
 
 data Equipment = Wall | PullUpBar | LowPullUpBar
-  deriving (Ord, Eq)
+  deriving (Bounded, Enum, Eq, Ord)
 
 instance Show Equipment where
   show Wall = "Wall"
