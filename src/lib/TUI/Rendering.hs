@@ -25,7 +25,7 @@ drawUI as = [ui]
     focusedEquipment = F.focusGetCurrent (_apsFocusedEquipment as)
     focusedStep = fromMaybe 0 $ F.focusGetCurrent (_apsFocusedStepIndex as)
     steps =
-      zipWith (\index step -> drawStep step focusedEquipment (index == focusedStep)) [0..]
+      zipWith (\index step -> drawStep index step focusedEquipment (index == focusedStep)) [0..]
       . _circuitSteps
       . _apsCircuit
       $ as
@@ -34,7 +34,7 @@ drawUI as = [ui]
 helperKeys :: T.Widget Name
 helperKeys =
   vBox
-    [ keyWidget "key"          "Up-down"    "Navigate between the equipments"
+    [ keyWidget "key"          "Up-Down"    "Navigate between the equipments"
     , keyWidget "key"          "Left-Right" "Navigate between the steps"
     , keyWidget "key"          "Enter"      "Select/deselect the focused equipment"
     , keyWidget "key"          "+"          "Add a step"
@@ -47,8 +47,8 @@ helperKeys =
     keyWidget keyAttr keyName keyDescription =
       withAttr keyAttr (txt keyName) <+> txt (": " <> keyDescription)
 
-drawStep :: Step -> Maybe Equipment -> Bool -> T.Widget Name
-drawStep step focusedEquipment isFocusedStep =
+drawStep :: Int -> Step -> Maybe Equipment -> Bool -> T.Widget Name
+drawStep index step focusedEquipment isFocusedStep =
   let
     equipments :: Set Equipment
     equipments = _stepEquipments step
@@ -56,7 +56,7 @@ drawStep step focusedEquipment isFocusedStep =
     selection = map (\e -> (e, e `Set.member` equipments)) allEquipments
   in
     withBorderStyle BS.ascii $
-    B.borderWithLabel (str "Step") $
+    B.borderWithLabel (str $ "Step " <> show (index + 1)) $
     vLimitPercent 30 $
     C.vCenter $
     vBox $
