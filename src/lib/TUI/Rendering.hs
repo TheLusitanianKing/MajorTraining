@@ -16,6 +16,8 @@ import qualified Brick.Widgets.Border.Style as BS
 import qualified Brick.Widgets.Center       as C
 import qualified Brick.Focus                as F
 import qualified Brick.Types                as T
+import qualified Brick.Util                 as U
+import qualified Graphics.Vty               as V
 import qualified Data.Set                   as Set
 
 
@@ -48,14 +50,19 @@ helperKeys =
       withAttr keyAttr (txt keyName) <+> txt (": " <> keyDescription)
 
 drawStep :: Int -> Step -> Maybe Equipment -> Bool -> T.Widget Name
-drawStep index step focusedEquipment isFocusedStep =
-  withBorderStyle BS.ascii $
-    B.borderWithLabel (str $ "Step " <> show (index + 1)) $
-    vLimitPercent 30 $
-    C.vCenter $
-    vBox $
-      str "Equipments: " : map (drawSelection isFocusedStep focusedEquipment) selection
+drawStep index step focusedEquipment isFocusedStep
+  | isFocusedStep =
+    updateAttrMap (A.applyAttrMappings [(B.borderAttr, V.white `U.on` V.brightBlue)]) stepWidget
+  | otherwise = stepWidget
   where
+    stepWidget :: T.Widget Name
+    stepWidget =
+      withBorderStyle BS.ascii $
+      B.borderWithLabel (str $ "Step " <> show (index + 1)) $
+      vLimitPercent 30 $
+      C.vCenter $
+      vBox $
+        str "Equipments: " : map (drawSelection isFocusedStep focusedEquipment) selection
     equipments :: Set Equipment
     equipments = _stepEquipments step
     selection :: [(Equipment, Bool)]
