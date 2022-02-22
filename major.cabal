@@ -15,7 +15,10 @@ library
   exposed-modules:
     Generation,
     Model,
-    TUI
+    TUI.AppState,
+    TUI.Core,
+    TUI.Events,
+    TUI.Rendering
   other-modules:
     Paths_major
   hs-source-dirs: src/lib
