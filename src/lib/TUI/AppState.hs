@@ -1,7 +1,13 @@
-module TUI.AppState where
+module TUI.AppState
+  ( AppState(..)
+  , Name
+  , initialAppState
+  , maxNumberOfSteps
+  )
+where
 
 
-import Model
+import Model (Circuit(..), Equipment(..), Step(..),  allEquipments)
 
 import qualified Brick.Focus as F
 import qualified Data.Set as Set

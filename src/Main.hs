@@ -1,8 +1,8 @@
 module Main where
 
 
-import TUI.Core
-import TUI.AppState
+import TUI.Core (app)
+import TUI.AppState (AppState(..), initialAppState)
 
 import qualified Brick.Main as M
 

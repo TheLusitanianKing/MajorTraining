@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module TUI.Rendering where
+module TUI.Rendering (drawUI) where
 
 
 import Brick.Widgets.Core
 import Data.Maybe (fromMaybe)
 import Data.Set (Set)
 import Data.Text (Text)
-import Model
-import TUI.AppState
+import Model (Circuit(..), Equipment(..), Step(..), allEquipments)
+import TUI.AppState (AppState(..), Name)
 
 import qualified Brick.AttrMap              as A
 import qualified Brick.Widgets.Border       as B
@@ -49,18 +49,17 @@ helperKeys =
 
 drawStep :: Int -> Step -> Maybe Equipment -> Bool -> T.Widget Name
 drawStep index step focusedEquipment isFocusedStep =
-  let
-    equipments :: Set Equipment
-    equipments = _stepEquipments step
-    selection :: [(Equipment, Bool)]
-    selection = map (\e -> (e, e `Set.member` equipments)) allEquipments
-  in
-    withBorderStyle BS.ascii $
+  withBorderStyle BS.ascii $
     B.borderWithLabel (str $ "Step " <> show (index + 1)) $
     vLimitPercent 30 $
     C.vCenter $
     vBox $
       str "Equipments: " : map (drawSelection isFocusedStep focusedEquipment) selection
+  where
+    equipments :: Set Equipment
+    equipments = _stepEquipments step
+    selection :: [(Equipment, Bool)]
+    selection = map (\e -> (e, e `Set.member` equipments)) allEquipments
 
 drawSelection :: Bool -> Maybe Equipment -> (Equipment, Bool) -> T.Widget Name
 drawSelection True (Just focusedEquipment) (e, selected) =
@@ -73,9 +72,8 @@ drawEquipment equipment isSelected isFocused =
     icone = if isSelected then "✓" else "✕"
     attrIcone = if isSelected then "success" else "failure"
     equipmentWidget =
-      if isFocused 
-        then withAttr "focused" . str $ show equipment
-        else str $ show equipment
+      let widget = str $ show equipment
+      in if isFocused then withAttr "focused" widget else widget
   in
     padLeftRight 2 $
     withAttr attrIcone (str icone) <+> padLeft (T.Pad 2) equipmentWidget

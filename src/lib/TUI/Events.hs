@@ -1,9 +1,9 @@
-module TUI.Events where
+module TUI.Events (appEvent) where
 
 
 import Data.Maybe (fromMaybe)
-import Model
-import TUI.AppState
+import Model (Circuit(..), Equipment(..), Step(..))
+import TUI.AppState (AppState(..), Name, maxNumberOfSteps)
 
 import qualified Brick.Focus  as F
 import qualified Brick.Main   as M
@@ -51,7 +51,7 @@ nextStepEvent :: EventHandler
 nextStepEvent st = M.continue $
   st { _apsFocusedStepIndex = F.focusNext (_apsFocusedStepIndex st) }
 
--- TODO: to be improved with lenses..
+-- TODO: to be improved with lenses
 selectEvent :: EventHandler
 selectEvent st = M.continue $
   let

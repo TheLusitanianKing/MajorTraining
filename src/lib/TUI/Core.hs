@@ -1,11 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module TUI.Core where
+module TUI.Core (app) where
 
 
-import TUI.AppState
-import TUI.Events
-import TUI.Rendering
+import TUI.AppState (AppState, Name)
+import TUI.Events (appEvent)
+import TUI.Rendering (drawUI)
 
 import qualified Brick.AttrMap as A
 import qualified Brick.Main    as M
