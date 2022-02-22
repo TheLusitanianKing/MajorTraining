@@ -19,7 +19,6 @@ import qualified Brick.Types                as T
 import qualified Data.Set                   as Set
 
 
-
 drawUI :: AppState -> [T.Widget Name]
 drawUI as = [ui]
   where
@@ -56,12 +55,12 @@ drawStep step focusedEquipment isFocusedStep =
     selection :: [(Equipment, Bool)]
     selection = map (\e -> (e, e `Set.member` equipments)) allEquipments
   in
-  withBorderStyle BS.ascii $
-  B.borderWithLabel (str "Step") $
-  vLimitPercent 30 $
-  C.vCenter $
-  vBox $
-    str "Equipments: " : map (drawSelection isFocusedStep focusedEquipment) selection
+    withBorderStyle BS.ascii $
+    B.borderWithLabel (str "Step") $
+    vLimitPercent 30 $
+    C.vCenter $
+    vBox $
+      str "Equipments: " : map (drawSelection isFocusedStep focusedEquipment) selection
 
 drawSelection :: Bool -> Maybe Equipment -> (Equipment, Bool) -> T.Widget Name
 drawSelection True (Just focusedEquipment) (e, selected) =
@@ -78,5 +77,5 @@ drawEquipment equipment isSelected isFocused =
         then withAttr "focused" . str $ show equipment
         else str $ show equipment
   in
-  padLeftRight 2 $
-  withAttr attrIcone (str icone) <+> padLeft (T.Pad 2) equipmentWidget
+    padLeftRight 2 $
+    withAttr attrIcone (str icone) <+> padLeft (T.Pad 2) equipmentWidget
