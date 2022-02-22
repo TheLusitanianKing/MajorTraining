@@ -3,10 +3,14 @@
 Inspired by the [circuit training of French Foreign Legion's Major Michiara](https://www.youtube.com/watch?v=wcitMZdgYIA), here is a very simple circuit training generator to plan yours with nothing but your terminal.
 
 ## Configuration
-TODO
+Nothing to configure yet but options soon to come.
 
 ## Usage
-TODO
+```bash
+cabal clean
+cabal build
+cabal run major
+```
 
 ## License
 see [LICENSE](LICENSE) file.
