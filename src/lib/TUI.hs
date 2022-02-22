@@ -3,7 +3,9 @@
 module TUI where
 
 
+import Data.Maybe (fromMaybe)
 import Data.Set (Set)
+import Data.Text (Text)
 import Model
 import Brick.Widgets.Core
 
@@ -17,12 +19,12 @@ import qualified Brick.Types                as T
 import qualified Brick.Util                 as U
 import qualified Graphics.Vty               as V
 
-import qualified Data.Set                   as Set
+import qualified Data.Set as Set
 
 
 data AppState = AppState
   { _apsCircuit          :: Circuit
-  , _apsFocusedStep      :: F.FocusRing (Int, Step) -- TODO: to be continued..
+  , _apsFocusedStepIndex :: F.FocusRing Int
   , _apsFocusedEquipment :: F.FocusRing Equipment
   , _apsInterrupted      :: Bool
   }
@@ -32,13 +34,14 @@ instance Show AppState where
 
 initialAppState :: AppState
 initialAppState = AppState
-  { _apsCircuit = circuit
-  , _apsFocusedStep = F.focusRing . zip [1..] . _circuitSteps $ circuit
+  { _apsCircuit          = circuit
+  , _apsFocusedStepIndex = F.focusRing [0..nbSteps - 1]
   , _apsFocusedEquipment = F.focusRing allEquipments
-  , _apsInterrupted = False -- if true, does not need to generate the circuit
+  , _apsInterrupted      = False -- if true, does not need to generate the circuit
   }
   where
     circuit = Circuit [Step $ Set.fromList [Wall], Step Set.empty]
+    nbSteps = length . _circuitSteps $ circuit
 
 type Name = () -- might change
 
@@ -55,25 +58,33 @@ drawUI :: AppState -> [T.Widget Name]
 drawUI as = [ui]
   where
     focusedEquipment = F.focusGetCurrent (_apsFocusedEquipment as)
-    steps = map (drawStep focusedEquipment) . _circuitSteps . _apsCircuit $ as
+    focusedStep = fromMaybe 0 $ F.focusGetCurrent (_apsFocusedStepIndex as)
+    steps =
+      zipWith (\index step -> drawStep step focusedEquipment (index == focusedStep)) [0..]
+      . _circuitSteps
+      . _apsCircuit
+      $ as
     ui =
-      hBox steps <=> helperCommands
+      hBox steps <=> helperKeys
 
--- TODO: simplify that
-helperCommands :: T.Widget Name
-helperCommands =
+helperKeys :: T.Widget Name
+helperKeys =
   vBox
-    [ withAttr "key" (str "Up-down") <+> str ": Navigate between the equipments of the selected step"
-    , withAttr "key" (str "Enter") <+> str ": Select/deselect the focused equipment"
-    , withAttr "key" (str "Left-Right") <+> str ": Navigate between the steps"
-    , withAttr "key" (str "+") <+> str ": Add a step"
-    , withAttr "key" (str "-") <+> str ": Remove the currently focused step"
-    , withAttr "importantKey" (str "Space") <+> str ": Start the generation"
-    , withAttr "dangerousKey" (str "Esc") <+> str ": Quit"
+    [ keyWidget "key"          "Up-down"    "Navigate between the equipments"
+    , keyWidget "key"          "Enter"      "Select/deselect the focused equipment"
+    , keyWidget "key"          "Left-Right" "Navigate between the steps"
+    , keyWidget "key"          "+"          "Add a step"
+    , keyWidget "key"          "-"          "Remove the currently focused step"
+    , keyWidget "importantKey" "Space"      "Start the generation"
+    , keyWidget "dangerousKey" "Esc"        "Quit"
     ]
+  where
+    keyWidget :: A.AttrName -> Text -> Text -> T.Widget Name
+    keyWidget keyAttr keyName keyDescription =
+      withAttr keyAttr (txt keyName) <+> txt (": " <> keyDescription)
 
-drawStep :: Maybe Equipment -> Step -> T.Widget Name
-drawStep mequipment step =
+drawStep :: Step -> Maybe Equipment -> Bool -> T.Widget Name
+drawStep step focusedEquipment isFocusedStep =
   let
     equipments :: Set Equipment
     equipments = _stepEquipments step
@@ -85,17 +96,18 @@ drawStep mequipment step =
   vLimitPercent 30 $
   C.vCenter $
   vBox $
-    map (drawSelection mequipment) selection
+    str "Equipments: " : map (drawSelection isFocusedStep focusedEquipment) selection
 
-drawSelection :: Maybe Equipment -> (Equipment, Bool) -> T.Widget Name
-drawSelection (Just eq) (e, selected) = drawEquipment selected (eq == e) e
-drawSelection _ (e, selected) = drawEquipment selected False e
+drawSelection :: Bool -> Maybe Equipment -> (Equipment, Bool) -> T.Widget Name
+drawSelection True (Just focusedEquipment) (e, selected) =
+  drawEquipment e selected (focusedEquipment == e)
+drawSelection _ _ (e, selected) = drawEquipment e selected False
 
-drawEquipment :: Bool -> Bool -> Equipment -> T.Widget Name
-drawEquipment isSelected isFocused equipment =
+drawEquipment :: Equipment -> Bool -> Bool -> T.Widget Name
+drawEquipment equipment isSelected isFocused =
   let
     icone = if isSelected then "✓" else "✕"
-    attrIcone  = if isSelected then "success" else "failure"
+    attrIcone = if isSelected then "success" else "failure"
     equipmentWidget =
       if isFocused 
         then withAttr "focused" . str $ show equipment
@@ -104,18 +116,49 @@ drawEquipment isSelected isFocused equipment =
   padLeftRight 2 $
   withAttr attrIcone (str icone) <+> padLeft (T.Pad 2) equipmentWidget
 
+-- TODO: lenses
 appEvent :: AppState -> T.BrickEvent Name e -> T.EventM Name (T.Next AppState)
 appEvent st (T.VtyEvent ev) =
   case ev of
     V.EvKey V.KEsc [] -> M.halt $ st { _apsInterrupted = True }
     V.EvKey (V.KChar ' ') [] -> M.halt st
+    V.EvKey V.KLeft [] ->
+      M.continue $
+        st { _apsFocusedStepIndex = F.focusPrev (_apsFocusedStepIndex st) }
+    V.EvKey V.KRight  [] ->
+      M.continue $
+        st { _apsFocusedStepIndex = F.focusNext (_apsFocusedStepIndex st) }
     V.EvKey V.KUp [] ->
-      -- TODO: improve this with lenses
       M.continue $
         st { _apsFocusedEquipment = F.focusPrev (_apsFocusedEquipment st) }
     V.EvKey V.KDown [] ->
       M.continue $
         st { _apsFocusedEquipment = F.focusNext (_apsFocusedEquipment st) }
+    V.EvKey V.KEnter [] ->
+      M.continue $
+        -- TODO: I really need to learn to use lenses..
+        let
+          focusedEquipment = F.focusGetCurrent (_apsFocusedEquipment st)
+          stepIndex = F.focusGetCurrent (_apsFocusedStepIndex st)
+          circuit' :: Circuit -> Maybe Int -> Maybe Equipment -> Circuit
+          circuit' original Nothing _ = original
+          circuit' original _ Nothing = original
+          circuit' original (Just i) (Just eq) =
+            original { _circuitSteps = steps' (_circuitSteps original) i eq }
+          steps' :: [Step] -> Int -> Equipment -> [Step]
+          steps' steps i eq = helper [] steps 0
+            where
+              helper acc [] _ = reverse acc
+              helper acc (x:xs) ci
+                | i == ci   = helper (step' x eq:acc) xs (ci + 1)
+                | otherwise = helper (x:acc) xs (ci + 1)
+          step' :: Step -> Equipment -> Step
+          step' step eq
+            | eq `Set.member` _stepEquipments step =
+              step { _stepEquipments = Set.delete eq (_stepEquipments step) }
+            | otherwise =
+              step { _stepEquipments = Set.insert eq (_stepEquipments step) }
+        in st { _apsCircuit = circuit' (_apsCircuit st) stepIndex focusedEquipment }
     _ -> M.continue st
 appEvent st _ = M.continue st
 
