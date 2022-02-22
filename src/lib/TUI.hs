@@ -40,7 +40,7 @@ initialAppState = AppState
   , _apsInterrupted      = False -- if true, does not need to generate the circuit
   }
   where
-    circuit = Circuit [Step $ Set.fromList [Wall], Step Set.empty]
+    circuit = Circuit [Step Set.empty, Step Set.empty]
     nbSteps = length . _circuitSteps $ circuit
 
 type Name = () -- might change
@@ -65,14 +65,16 @@ drawUI as = [ui]
       . _apsCircuit
       $ as
     ui =
-      hBox steps <=> helperKeys
+      C.vCenter $
+      C.hCenter $
+        hBox steps <=> padTop (T.Pad 2) helperKeys
 
 helperKeys :: T.Widget Name
 helperKeys =
   vBox
     [ keyWidget "key"          "Up-down"    "Navigate between the equipments"
-    , keyWidget "key"          "Enter"      "Select/deselect the focused equipment"
     , keyWidget "key"          "Left-Right" "Navigate between the steps"
+    , keyWidget "key"          "Enter"      "Select/deselect the focused equipment"
     , keyWidget "key"          "+"          "Add a step"
     , keyWidget "key"          "-"          "Remove the currently focused step"
     , keyWidget "importantKey" "Space"      "Start the generation"

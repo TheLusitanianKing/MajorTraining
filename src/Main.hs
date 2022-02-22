@@ -9,6 +9,7 @@ import qualified Brick.Main as M
 
 main :: IO ()
 main = do
-  finalState <- M.defaultMain app initialAppState 
-  -- verify _apsInterrupted here to generate or not
-  putStrLn $ "final state: " <> show finalState
+  finalState <- M.defaultMain app initialAppState
+  if _apsInterrupted finalState
+    then putStrLn "See you soon!"
+    else putStrLn $ "Ready to generate with: " <> show finalState
