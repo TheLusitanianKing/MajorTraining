@@ -6,6 +6,7 @@ module Model
   , Circuit(..)
   , GeneratedCircuit(..)
   , Step(..)
+  , allEquipments
   , allExercises
   , nbPickedExercises
   )
@@ -28,10 +29,13 @@ instance Show Equipment where
   show PullUpBar = "Pull-up Bar"
   show LowPullUpBar = "Low Pull-up Bar"
 
+allEquipments :: [Equipment]
+allEquipments = [minBound..maxBound]
+
 data Exercise = Exercise
   { _exerciseName :: Text
   , _exerciseEquipments :: Set Equipment
-  } deriving (Ord, Eq)
+  } deriving (Eq, Ord, Show)
 
 allExercises :: Set Exercise
 allExercises = Set.fromList
@@ -75,15 +79,15 @@ allExercises = Set.fromList
   ]
 
 newtype Step = Step { _stepEquipments :: Set Equipment }
-  deriving (Show)
+  deriving (Eq, Show)
 
 newtype Circuit = Circuit { _circuitSteps :: [Step] }
-  deriving (Show)
+  deriving (Eq, Show)
 
 data GeneratedCircuit = GeneratedCircuit
   { _circuit :: Circuit
   , _rounds :: NonEmpty (NonEmpty Exercise)
-  }
+  } deriving (Eq, Show)
 
 -- | Get the total number of exercises from a generated circuit
 nbPickedExercises :: GeneratedCircuit -> Int
