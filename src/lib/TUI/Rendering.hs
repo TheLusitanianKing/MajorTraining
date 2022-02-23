@@ -21,6 +21,7 @@ import qualified Graphics.Vty               as V
 import qualified Data.Set                   as Set
 
 
+-- | The main render function for the brick app
 drawUI :: AppState -> [T.Widget Name]
 drawUI as = [ui]
   where
@@ -33,6 +34,7 @@ drawUI as = [ui]
       $ as
     ui = C.vCenter $ C.hCenter $ hBox steps <=> padTop (T.Pad 2) helperKeys
 
+-- | Rendering function for the help
 helperKeys :: T.Widget Name
 helperKeys =
   vBox
@@ -49,10 +51,11 @@ helperKeys =
     keyWidget keyAttr keyName keyDescription =
       withAttr keyAttr (txt keyName) <+> txt (": " <> keyDescription)
 
+-- | Sub-function for rendering a step
 drawStep :: Int -> Step -> Maybe Equipment -> Bool -> T.Widget Name
 drawStep index step focusedEquipment isFocusedStep
   | isFocusedStep =
-    updateAttrMap (A.applyAttrMappings [(B.borderAttr, V.white `U.on` V.brightBlue)]) stepWidget
+    updateAttrMap (A.applyAttrMappings [(B.borderAttr, U.fg V.brightBlue)]) stepWidget
   | otherwise = stepWidget
   where
     stepWidget :: T.Widget Name
@@ -68,11 +71,13 @@ drawStep index step focusedEquipment isFocusedStep
     selection :: [(Equipment, Bool)]
     selection = map (\e -> (e, e `Set.member` equipments)) allEquipments
 
+-- | Sub-function for rendering a selection
 drawSelection :: Bool -> Maybe Equipment -> (Equipment, Bool) -> T.Widget Name
 drawSelection True (Just focusedEquipment) (e, selected) =
   drawEquipment e selected (focusedEquipment == e)
 drawSelection _ _ (e, selected) = drawEquipment e selected False
 
+-- | Sub-function for rendering a equipment
 drawEquipment :: Equipment -> Bool -> Bool -> T.Widget Name
 drawEquipment equipment isSelected isFocused =
   let

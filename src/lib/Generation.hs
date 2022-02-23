@@ -10,8 +10,13 @@ import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as Set
 
 
--- | Generate a circuit from its steps, a set of exercises to use, a number of round to generate and a generator
-generateCircuit :: StdGen -> Set Exercise -> Int -> Circuit -> Either String GeneratedCircuit
+-- | Generate a circuit as the function clearly says
+generateCircuit :: StdGen       -- ^ the random generator
+                -> Set Exercise -- ^ the set of exercises to be used in the generated rounds
+                -> Int          -- ^ the number of rounds wanted
+                -> Circuit      -- ^ the circuit
+                -- ^ either fails with an explicit error message or returns the generated circuit
+                -> Either String GeneratedCircuit
 generateCircuit gen exs nbRounds c
   | null sts = Left "Empty circuit given."
   | otherwise = helper [] [] exs sts gen nbRounds
@@ -38,5 +43,9 @@ generateCircuit gen exs nbRounds c
              
 
 -- | Check if the given step can have the given exercise assigned to it
+-- TODO: think about alternatives
+-- should it force a step with equipment X to use an exercise with equipment X?
+-- or, should it accept whatever exercise that is possible to be done in the step?
+-- => should the app always give an exercise using the equipments of the step or not?
 stepCanHaveThisExercise :: Step -> Exercise -> Bool
 stepCanHaveThisExercise s e = _exerciseEquipments e `Set.isSubsetOf` _stepEquipments s

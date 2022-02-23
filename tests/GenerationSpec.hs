@@ -4,6 +4,7 @@ module GenerationSpec (spec) where
 import Data.Set (Set)
 import Data.Either (isLeft, isRight)
 import Model
+  (Circuit(..), Exercise(..), GeneratedCircuit(..), Step(..), allExercises, nbPickedExercises)
 import Generation (generateCircuit)
 import System.Random (StdGen, mkStdGen)
 import Test.Hspec
@@ -34,9 +35,11 @@ spec = do
     describe "Generating X rounds on the Y steps circuit." $ do
       prop "X steps Y rounds = X*Y total exercises." $ do
         \x y -> 
+          -- TODO: see how to force x and y to be natural numbers
+          -- https://hackage.haskell.org/package/base-4.16.0.0/docs/GHC-TypeLits.html ?
           if x >= 0 && y >= 0
             then assertHaveXExercises (x*y) $ generateCircuit gen allExercises y (circuitWithEmptySteps x)
-            else assertBool "" True -- TODO: see how to force x and y to be natural numbers
+            else assertBool "" True
 
 circuitWithEmptySteps :: Int -> Circuit
 circuitWithEmptySteps nbSteps = Circuit
@@ -52,7 +55,7 @@ gen = mkStdGen 1
 
 assertHaveXExercises :: HasCallStack => Int -> Either a GeneratedCircuit -> Assertion
 assertHaveXExercises x egc = case egc of
-  Left _ -> assertBool [] True -- TODO: there's probably a better way
+  Left _ -> assertBool [] True -- TODO: find another way to do this
   Right gc ->
     assertEqual "Does not have the right number of exercises." x $
       nbPickedExercises gc 

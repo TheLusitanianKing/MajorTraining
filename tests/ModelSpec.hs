@@ -1,7 +1,7 @@
 module ModelSpec (spec) where
 
 
-import Model
+import Model (Circuit(..), Exercise(..), GeneratedCircuit(..), nbPickedExercises)
 import Test.Hspec
 
 import qualified Data.List.NonEmpty as NE
@@ -26,4 +26,4 @@ sampleCircuit :: Circuit
 sampleCircuit = undefined -- I don't even need to define this
 
 sampleExercise :: Exercise 
-sampleExercise = undefined -- or this: lazy evaluation for the win
+sampleExercise = undefined -- or this, thanks to lazy evaluation

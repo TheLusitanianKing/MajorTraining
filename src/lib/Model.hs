@@ -37,6 +37,8 @@ data Exercise = Exercise
   , _exerciseEquipments :: Set Equipment
   } deriving (Eq, Ord, Show)
 
+-- | TODO: all of this could be done automatically from a CSV file or something
+--   might be something to change someday
 allExercises :: Set Exercise
 allExercises = Set.fromList
   [ Exercise { _exerciseName = "Strict Pullups", _exerciseEquipments = Set.fromList [PullUpBar] }
@@ -87,7 +89,10 @@ newtype Circuit = Circuit { _circuitSteps :: [Step] }
 data GeneratedCircuit = GeneratedCircuit
   { _circuit :: Circuit
   , _rounds :: NonEmpty (NonEmpty Exercise)
-  } deriving (Eq, Show)
+  } deriving (Eq)
+
+instance Show GeneratedCircuit where
+  show _ = "Generated circuit printing here..."
 
 -- | Get the total number of exercises from a generated circuit
 nbPickedExercises :: GeneratedCircuit -> Int

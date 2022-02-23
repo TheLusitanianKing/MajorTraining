@@ -15,6 +15,7 @@ import qualified Data.Set as Set
 
 type Name = () -- might change
 
+-- | The main state for brick
 data AppState = AppState
   { _apsCircuit          :: Circuit
   , _apsFocusedStepIndex :: F.FocusRing Int
@@ -25,6 +26,8 @@ data AppState = AppState
 instance Show AppState where
   show st = "AppState Circuit: " <> show (_apsCircuit st)
 
+-- | The state with which we start
+-- TODO: make it more customizable with the number of initial step
 initialAppState :: AppState
 initialAppState = AppState
   { _apsCircuit          = circuit
@@ -36,6 +39,8 @@ initialAppState = AppState
     circuit = Circuit [Step Set.empty, Step Set.empty]
     nbSteps = length . _circuitSteps $ circuit
 
--- for render limits (might be changed)
+-- | The maximum number of steps the circuit can have
+--   only present for rendering limits
+-- TODO: might be nice to avoid such limits, modifying the way the steps are presented now
 maxNumberOfSteps :: Int
 maxNumberOfSteps = 5

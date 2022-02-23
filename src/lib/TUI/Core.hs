@@ -13,6 +13,7 @@ import qualified Brick.Util    as U
 import qualified Graphics.Vty  as V
 
 
+-- | The brick app
 app :: M.App AppState e Name
 app = M.App
   { M.appDraw = drawUI
@@ -22,6 +23,7 @@ app = M.App
   , M.appAttrMap = const attrMap
   }
 
+-- | The attribute map for brick
 attrMap :: A.AttrMap
 attrMap = A.attrMap V.defAttr
   [ ("success", U.fg V.green)

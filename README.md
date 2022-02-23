@@ -5,7 +5,7 @@ Inspired by the [circuit training of French Foreign Legion's Major Michiara](htt
 ![Preview](preview.png)
 
 ## Usage
-A simple `cabal run major` should be enough.
+A simple `cabal run major` then you can follow the instructions. It should be clear enough what to do from there.
 
 ## License
 see [LICENSE](LICENSE) file.
