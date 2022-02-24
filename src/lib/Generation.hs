@@ -23,7 +23,14 @@ generateCircuit gen exs nbRounds c
     where
       sts :: [Step]
       sts = _circuitSteps c
-      helper :: [NonEmpty Exercise] -> [Exercise] -> Set Exercise -> [Step] -> StdGen -> Int -> Either String GeneratedCircuit
+      -- | tail-recursive helper for generating
+      helper :: [NonEmpty Exercise] -- ^ the accumulator
+             -> [Exercise]          -- ^ the exercises of the current round
+             -> Set Exercise        -- ^ the remaining exercises
+             -> [Step]              -- ^ the remaining steps
+             -> StdGen              -- ^ the current generator
+             -> Int                 -- ^ the remaining number of rounds to generate
+             -> Either String GeneratedCircuit
       helper acc tmp es steps g n
         | n == 0 && null acc = Left "No rounds generated."
         | n == 0 = Right $ GeneratedCircuit { _circuit = c, _rounds = NE.fromList (reverse acc) }
