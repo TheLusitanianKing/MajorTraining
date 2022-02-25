@@ -92,7 +92,15 @@ data GeneratedCircuit = GeneratedCircuit
   } deriving (Eq)
 
 instance Show GeneratedCircuit where
-  show _ = "Generated circuit printing here..."
+  show gc = 
+    let
+      showRound :: NonEmpty Exercise -> String
+      showRound = concatMap showRoundExercise
+      showRoundExercise :: Exercise -> String
+      showRoundExercise = undefined
+    in concat $ showRound <$> _rounds gc
+        -- the concat might not be the right thing to do
+        -- intercalate? intersperse?
 
 -- | Get the total number of exercises from a generated circuit
 nbPickedExercises :: GeneratedCircuit -> Int
