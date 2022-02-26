@@ -19,6 +19,7 @@ import Data.Text (Text)
 
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as Set
+import qualified Data.Text as Text
 
 
 data Equipment = Wall | PullUpBar | LowPullUpBar
@@ -94,13 +95,23 @@ data GeneratedCircuit = GeneratedCircuit
 instance Show GeneratedCircuit where
   show gc = 
     let
-      showRound :: NonEmpty Exercise -> String
-      showRound = concatMap showRoundExercise
-      showRoundExercise :: Exercise -> String
-      showRoundExercise = undefined
-    in concat $ showRound <$> _rounds gc
-        -- the concat might not be the right thing to do
-        -- intercalate? intersperse?
+      fill :: Int -> String -> String
+      fill x st = replicate x ' ' <> st
+      showRounds :: [(Int, [Exercise])] -> String
+      showRounds rs =
+        unlines
+          $ map (\(roundNb, exs) -> showRound roundNb (zip [1..] exs)) rs
+      showRound :: Int -> [(Int, Exercise)] -> String
+      showRound roundNb exs =
+        "Round " <> show roundNb <> ": \n" <> showedExercises
+        where
+          showedExercises = unlines $ map (fill 2 . uncurry showExercise) exs
+      showExercise :: Int -> Exercise -> String
+      showExercise nbExercise e =
+        "Exercise " <> show nbExercise <> ": " <> Text.unpack (_exerciseName e)
+      rounds :: [(Int, [Exercise])]
+      rounds = zip [1..] . fmap NE.toList . NE.toList $ _rounds gc
+    in showRounds rounds
 
 -- | Get the total number of exercises from a generated circuit
 nbPickedExercises :: GeneratedCircuit -> Int
