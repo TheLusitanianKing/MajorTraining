@@ -1,16 +1,19 @@
-# Major's Circuit Training [![Tests](https://github.com/TheLusitanianKing/MajorTraining/actions/workflows/tests.yml/badge.svg)](https://github.com/TheLusitanianKing/MajorTraining/actions/workflows/tests.yml)
+:england: [English version/Versão inglesa](README-en.md)
+***
 
-Inspired by the [circuit training of French Foreign Legion's Major Michiara](https://www.youtube.com/watch?v=wcitMZdgYIA), here is a very simple circuit training generator to plan yours with nothing but your terminal.
+# Treinos em circuito do Major Michiara [![Tests](https://github.com/TheLusitanianKing/MajorTraining/actions/workflows/tests.yml/badge.svg)](https://github.com/TheLusitanianKing/MajorTraining/actions/workflows/tests.yml)
 
-## Preview
-### Light terminal
+Inspirado pelos [treinos em circuito do Major Michiara da Legião Estrangeira Francesa](https://www.youtube.com/watch?v=wcitMZdgYIA), eis uma app para preparar os treinos apenas com um terminal.
+
+## Visual
+### Tom claro
 ![Preview light terminal](preview-light.png)
 
-### Dark terminal
+### Tom escuro
 ![Preview dark terminal](preview-dark.png)
 
-## Usage
-A simple `cabal run major` then you can follow the instructions. It should be clear enough what to do from there.
+## Uso
+Um simples `cabal run major` e depois, é só seguir as instruções (em inglês).
 
-## License
-see [LICENSE](LICENSE) file.
+## Licença
+Ler [LICENSE](LICENSE).
