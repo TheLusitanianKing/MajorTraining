@@ -5,11 +5,6 @@
 
 Inspirado pelos [treinos em circuito do Major Michiara da Legião Estrangeira Francesa](https://www.youtube.com/watch?v=wcitMZdgYIA), eis uma app para preparar os treinos apenas com um terminal.
 
-## Visual
-### Tom claro
-![Preview light terminal](preview-light.png)
-
-### Tom escuro
 ![Preview dark terminal](preview-dark.png)
 
 ## Uso
