@@ -36,7 +36,7 @@ generateCircuit gen exs nbRounds c
         | n == 0 = Right $ GeneratedCircuit { _circuit = c, _rounds = NE.fromList (reverse acc) }
         | Set.null es = Left "Not enough exercises to generate the circuit."
         | null steps = helper (NE.fromList (reverse tmp):acc) [] es (_circuitSteps c) g (n - 1)
-        | nbValidExs == 0 = Left "No more valid exercises for the step."
+        | nbValidExs == 0 = Left "Not enough exercises to generate the circuit."
         | otherwise =
           let
             (i, g') = randomR (0, nbValidExs - 1) g

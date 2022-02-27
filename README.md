@@ -8,7 +8,12 @@ Inspirado pelos [treinos em circuito do Major Michiara da Legião Estrangeira Fr
 ![Preview dark terminal](preview.png)
 
 ## Uso
-Um simples `cabal run major` e depois, é só seguir as instruções (em inglês).
+```bash
+cabal install
+major
+```
+
+Se quiser, pode também ver as opções disponíveis com `major --help`.
 
 ## Licença
 Ler [LICENSE](LICENSE).

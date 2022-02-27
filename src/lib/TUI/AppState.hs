@@ -27,16 +27,15 @@ instance Show AppState where
   show st = "AppState Circuit: " <> show (_apsCircuit st)
 
 -- | The state with which we start
--- TODO: make it more customizable with the number of initial step
-initialAppState :: AppState
-initialAppState = AppState
+initialAppState :: Int -> AppState
+initialAppState initialNumberOfSteps = AppState
   { _apsCircuit          = circuit
   , _apsFocusedStepIndex = F.focusRing [0..nbSteps - 1]
   , _apsFocusedEquipment = F.focusRing allEquipments
   , _apsInterrupted      = False -- if true, does not generate the circuit when existing
   }
   where
-    circuit = Circuit [Step Set.empty, Step Set.empty]
+    circuit = Circuit $ replicate initialNumberOfSteps (Step Set.empty)
     nbSteps = length . _circuitSteps $ circuit
 
 -- | The maximum number of steps the circuit can have

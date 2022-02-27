@@ -8,7 +8,12 @@ Inspired by the [circuit training of French Foreign Legion's Major Michiara](htt
 ![Preview dark terminal](preview.png)
 
 ## Usage
-A simple `cabal run major` then you can follow the instructions. It should be clear enough what to do from there.
+```bash
+cabal install
+major
+```
+
+Check out the command line options with `major --help` if you want to.
 
 ## License
 See [LICENSE](LICENSE) file.
