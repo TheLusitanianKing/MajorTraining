@@ -4,11 +4,11 @@ module TUI.Rendering (drawUI) where
 
 
 import Brick.Widgets.Core
-import Data.Maybe (fromMaybe)
+import Data.Maybe (catMaybes, fromMaybe)
 import Data.Set (Set)
 import Data.Text (Text)
 import Model (Circuit(..), Equipment(..), Step(..), allEquipments)
-import TUI.AppState (AppState(..), Name)
+import TUI.AppState (AppState(..), Name, maxNumberOfSteps)
 
 import qualified Brick.AttrMap              as A
 import qualified Brick.Widgets.Border       as B
@@ -32,24 +32,34 @@ drawUI as = [ui]
       . _circuitSteps
       . _apsCircuit
       $ as
-    ui = C.vCenter $ C.hCenter $ hBox steps <=> padTop (T.Pad 2) helperKeys
+    ui = C.vCenter $ C.hCenter $ hBox steps <=> padTop (T.Pad 2) (helperKeys as)
 
 -- | Rendering function for the help
-helperKeys :: T.Widget Name
-helperKeys =
-  vBox
-    [ keyWidget "key"          "Up-Down"    "Navigate between the equipments"
-    , keyWidget "key"          "Left-Right" "Navigate between the steps"
-    , keyWidget "key"          "Enter"      "Select/deselect the focused equipment"
-    , keyWidget "key"          "+"          "Add a step"
-    , keyWidget "key"          "-"          "Remove the currently focused step"
-    , keyWidget "importantKey" "Space"      "Start the generation"
-    , keyWidget "dangerousKey" "Esc"        "Quit"
+helperKeys :: AppState -> T.Widget Name
+helperKeys as =
+  vBox $ catMaybes
+    [ return $ keyWidget "key" "Up-Down" "Navigate between the equipments"
+    , return $ keyWidget "key" "Left-Right" "Navigate between the steps"
+    , return $ keyWidget "key" "Enter" "Select/deselect the focused equipment"
+    , if canAddStep
+        then return $ keyWidget "key" "+" "Add a step"
+        else Nothing
+    , if canRemoveStep
+        then return $ keyWidget "key" "-" "Remove the currently focused step"
+        else Nothing
+    , return $ keyWidget "importantKey" "Space" "Start the generation"
+    , return $ keyWidget "dangerousKey" "Esc" "Quit"
     ]
   where
     keyWidget :: A.AttrName -> Text -> Text -> T.Widget Name
     keyWidget keyAttr keyName keyDescription =
       withAttr keyAttr (txt keyName) <+> txt (": " <> keyDescription)
+    nbSteps :: Int
+    nbSteps = length . _circuitSteps . _apsCircuit $ as
+    canAddStep :: Bool
+    canAddStep = nbSteps < maxNumberOfSteps 
+    canRemoveStep :: Bool
+    canRemoveStep = nbSteps > 1
 
 -- | Sub-function for rendering a step
 drawStep :: Int -> Step -> Maybe Equipment -> Bool -> T.Widget Name
