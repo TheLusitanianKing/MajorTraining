@@ -1,5 +1,6 @@
 module Options
   ( Options(..)
+  , defaultOptions
   , getOptions
   )
 where
@@ -30,7 +31,7 @@ optionParser =
         <> value (_optionNumberOfRounds defaultOptions)
         <> metavar "INT")
     <*> option auto
-        (long "nb-initial-steps" -- TODO: check if I can limit the given number of steps
+        (long "nb-initial-steps"
         <> short 's'
         <> help "Number of initial steps"
         <> showDefault

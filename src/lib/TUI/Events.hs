@@ -3,7 +3,7 @@ module TUI.Events (appEvent) where
 
 import Data.Maybe (fromMaybe)
 import Model (Circuit(..), Equipment(..), Step(..))
-import TUI.AppState (AppState(..), Name, maxNumberOfSteps)
+import TUI.AppState (AppState(..), Name, validNumberOfSteps)
 
 import qualified Brick.Focus  as F
 import qualified Brick.Main   as M
@@ -89,7 +89,8 @@ selectEvent st = M.continue $
 -- | When the user wants to add a new step
 addStepEvent :: EventHandler
 addStepEvent st
-  | length (_circuitSteps $ _apsCircuit st) + 1 > maxNumberOfSteps = M.continue st
+  | not . validNumberOfSteps $ length (_circuitSteps $ _apsCircuit st) + 1 =
+    M.continue st
   | otherwise = M.continue $
     let
       circuit = _apsCircuit st

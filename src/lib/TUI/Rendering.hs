@@ -8,7 +8,7 @@ import Data.Maybe (catMaybes, fromMaybe)
 import Data.Set (Set)
 import Data.Text (Text)
 import Model (Circuit(..), Equipment(..), Step(..), allEquipments)
-import TUI.AppState (AppState(..), Name, maxNumberOfSteps)
+import TUI.AppState (AppState(..), Name, validNumberOfSteps)
 
 import qualified Brick.AttrMap              as A
 import qualified Brick.Widgets.Border       as B
@@ -57,7 +57,7 @@ helperKeys as =
     nbSteps :: Int
     nbSteps = length . _circuitSteps . _apsCircuit $ as
     canAddStep :: Bool
-    canAddStep = nbSteps < maxNumberOfSteps 
+    canAddStep = validNumberOfSteps $ nbSteps + 1
     canRemoveStep :: Bool
     canRemoveStep = nbSteps > 1
 

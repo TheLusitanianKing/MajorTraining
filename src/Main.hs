@@ -3,17 +3,23 @@ module Main where
 
 import Generation (generateCircuit)
 import Model (allExercises)
-import Options (Options(..), getOptions)
+import Options (Options(..), defaultOptions, getOptions)
 import System.Random (initStdGen)
 import TUI.Core (app)
-import TUI.AppState (AppState(..), initialAppState)
+import TUI.AppState (AppState(..), initialAppState, validNumberOfSteps)
 
 import qualified Brick.Main as M
 
 
 startApp :: Options -> IO ()
 startApp opt = do
-  finalState <- M.defaultMain app (initialAppState $ _optionInitialNumberOfSteps opt)
+  let
+    askedNumberOfSteps = _optionInitialNumberOfSteps opt
+    initialNumberOfSteps =
+      if validNumberOfSteps askedNumberOfSteps
+        then askedNumberOfSteps
+        else _optionInitialNumberOfSteps defaultOptions
+  finalState <- M.defaultMain app $ initialAppState initialNumberOfSteps
   if _apsInterrupted finalState
     then putStrLn "See you soon!"
     else do

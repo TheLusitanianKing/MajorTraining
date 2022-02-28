@@ -2,7 +2,7 @@ module TUI.AppState
   ( AppState(..)
   , Name
   , initialAppState
-  , maxNumberOfSteps
+  , validNumberOfSteps
   )
 where
 
@@ -41,5 +41,5 @@ initialAppState initialNumberOfSteps = AppState
 -- | The maximum number of steps the circuit can have
 --   only present for rendering limits
 -- TODO: might be nice to avoid such limits, modifying the way the steps are presented now
-maxNumberOfSteps :: Int
-maxNumberOfSteps = 5
+validNumberOfSteps :: Int -> Bool
+validNumberOfSteps x = 1 <= x && x <= 5
