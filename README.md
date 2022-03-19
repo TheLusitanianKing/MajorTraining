@@ -9,7 +9,7 @@ Inspirado pelos [treinos em circuito do Major Michiara da Legião Estrangeira Fr
 
 ## Uso
 ```bash
-cabal install
+cabal install --overwrite-policy=always
 major
 ```
 
