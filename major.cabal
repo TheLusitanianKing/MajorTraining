@@ -27,6 +27,7 @@ library
     base >= 4.14,
     brick >= 0.67,
     containers >= 0.6.4,
+    lens >= 5.1.1,
     optparse-applicative >= 0.17,
     random >= 1.2.0,
     text >= 1.2.5,
@@ -65,6 +66,7 @@ test-suite major-test
     hspec >= 2.7.4,
     hspec-discover >= 2.9.4,
     HUnit >= 1.6.2,
+    lens >= 5.1.1,
     random >= 1.2.0,
     major
   ghc-options: -Wall

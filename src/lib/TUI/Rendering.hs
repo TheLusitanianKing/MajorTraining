@@ -4,11 +4,12 @@ module TUI.Rendering (drawUI) where
 
 
 import Brick.Widgets.Core
+import Control.Lens (view)
 import Data.Maybe (catMaybes, fromMaybe)
 import Data.Set (Set)
 import Data.Text (Text)
-import Model (Circuit(..), Equipment(..), Step(..), allEquipments)
-import TUI.AppState (AppState(..), Name, validNumberOfSteps)
+import Model (Equipment(..), Step(..), allEquipments, circuitSteps, stepEquipments)
+import TUI.AppState (AppState, Name, validNumberOfSteps, apsCircuit, apsFocusedEquipment, apsFocusedStepIndex)
 
 import qualified Brick.AttrMap              as A
 import qualified Brick.Widgets.Border       as B
@@ -25,12 +26,11 @@ import qualified Data.Set                   as Set
 drawUI :: AppState -> [T.Widget Name]
 drawUI as = [ui]
   where
-    focusedEquipment = F.focusGetCurrent (_apsFocusedEquipment as)
-    focusedStep = fromMaybe 0 $ F.focusGetCurrent (_apsFocusedStepIndex as)
+    focusedEquipment = F.focusGetCurrent (view apsFocusedEquipment as)
+    focusedStep = fromMaybe 0 $ F.focusGetCurrent (view apsFocusedStepIndex as)
     steps =
       zipWith (\index step -> drawStep index step focusedEquipment (index == focusedStep)) [0..]
-      . _circuitSteps
-      . _apsCircuit
+      . view (apsCircuit . circuitSteps)
       $ as
     ui = C.vCenter $ C.hCenter $ hBox steps <=> padTop (T.Pad 2) (helperKeys as)
 
@@ -55,7 +55,7 @@ helperKeys as =
     keyWidget keyAttr keyName keyDescription =
       withAttr keyAttr (txt keyName) <+> txt (": " <> keyDescription)
     nbSteps :: Int
-    nbSteps = length . _circuitSteps . _apsCircuit $ as
+    nbSteps = length . view (apsCircuit . circuitSteps) $ as
     canAddStep :: Bool
     canAddStep = validNumberOfSteps $ nbSteps + 1
     canRemoveStep :: Bool
@@ -77,7 +77,7 @@ drawStep index step focusedEquipment isFocusedStep
       vBox $
         str "Equipments: " : map (drawSelection isFocusedStep focusedEquipment) selection
     equipments :: Set Equipment
-    equipments = _stepEquipments step
+    equipments = view stepEquipments step
     selection :: [(Equipment, Bool)]
     selection = map (\e -> (e, e `Set.member` equipments)) allEquipments
 

@@ -6,7 +6,7 @@ import Model (allExercises)
 import Options (Options(..), defaultOptions, getOptions)
 import System.Random (initStdGen)
 import TUI.Core (app)
-import TUI.AppState (AppState(..), initialAppState, validNumberOfSteps)
+import TUI.AppState (initialAppState, validNumberOfSteps, hasBeenInterrupted, getCircuit)
 
 import qualified Brick.Main as M
 
@@ -20,11 +20,11 @@ startApp opt = do
         then askedNumberOfSteps
         else _optionInitialNumberOfSteps defaultOptions
   finalState <- M.defaultMain app $ initialAppState initialNumberOfSteps
-  if _apsInterrupted finalState
+  if hasBeenInterrupted finalState
     then putStrLn "See you soon!"
     else do
       gen <- initStdGen
-      case generateCircuit gen allExercises (_optionNumberOfRounds opt) (_apsCircuit finalState) of
+      case generateCircuit gen allExercises (_optionNumberOfRounds opt) (getCircuit finalState) of
         Left errorMessage -> putStrLn errorMessage
         Right generatedCircuit -> print generatedCircuit
 

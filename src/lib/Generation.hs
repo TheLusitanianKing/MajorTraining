@@ -1,9 +1,10 @@
 module Generation (generateCircuit) where
 
 
+import Control.Lens (view)
 import Data.List.NonEmpty (NonEmpty)
 import Data.Set (Set)
-import Model (Circuit(..), Exercise(..), GeneratedCircuit(..), Step (..))
+import Model (Circuit(..), Exercise, GeneratedCircuit(..), Step (..), circuitSteps, exerciseEquipments, stepEquipments)
 import System.Random (Random(randomR), StdGen)
 
 import qualified Data.List.NonEmpty as NE
@@ -22,7 +23,7 @@ generateCircuit gen exs nbRounds c
   | otherwise = helper [] [] exs sts gen nbRounds
     where
       sts :: [Step]
-      sts = _circuitSteps c
+      sts = view circuitSteps c
       -- | tail-recursive helper for generating
       helper :: [NonEmpty Exercise] -- ^ the accumulator
              -> [Exercise]          -- ^ the exercises of the current round
@@ -33,9 +34,9 @@ generateCircuit gen exs nbRounds c
              -> Either String GeneratedCircuit
       helper acc tmp es steps g n
         | n == 0 && null acc = Left "No rounds generated."
-        | n == 0 = Right $ GeneratedCircuit { _circuit = c, _rounds = NE.fromList (reverse acc) }
+        | n == 0 = Right $ GeneratedCircuit c $ NE.fromList (reverse acc)
         | Set.null es = Left "Not enough exercises to generate the circuit."
-        | null steps = helper (NE.fromList (reverse tmp):acc) [] es (_circuitSteps c) g (n - 1)
+        | null steps = helper (NE.fromList (reverse tmp):acc) [] es sts g (n - 1)
         | nbValidExs == 0 = Left "Not enough exercises to generate the circuit."
         | otherwise =
           let
@@ -55,4 +56,4 @@ generateCircuit gen exs nbRounds c
 -- or, should it accept whatever exercise that is possible to be done in the step?
 -- => should the app always give an exercise using the equipments of the step or not?
 stepCanHaveThisExercise :: Step -> Exercise -> Bool
-stepCanHaveThisExercise s e = _exerciseEquipments e `Set.isSubsetOf` _stepEquipments s
+stepCanHaveThisExercise s e = view exerciseEquipments e `Set.isSubsetOf` view stepEquipments s

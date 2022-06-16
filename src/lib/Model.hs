@@ -1,18 +1,26 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Model
   ( Equipment(..)
-  , Exercise(..)
-  , Circuit(..)
-  , GeneratedCircuit(..)
-  , Step(..)
+  , Exercise
+  , Circuit(Circuit)
+  , GeneratedCircuit(GeneratedCircuit)
+  , Step(Step)
   , allEquipments
   , allExercises
   , nbPickedExercises
+  -- lenses
+  , circuitSteps
+  , stepEquipments
+  , exerciseEquipments
+  , exerciseName
   )
 where
 
 
+
+import Control.Lens (makeLenses)
 import Data.List.NonEmpty (NonEmpty)
 import Data.Set (Set)
 import Data.Text (Text)
@@ -30,13 +38,50 @@ instance Show Equipment where
   show PullUpBar = "Pull-up Bar"
   show LowPullUpBar = "Low Pull-up Bar"
 
-allEquipments :: [Equipment]
-allEquipments = [minBound..maxBound]
-
 data Exercise = Exercise
   { _exerciseName :: Text
   , _exerciseEquipments :: Set Equipment
   } deriving (Eq, Ord, Show)
+
+newtype Step = Step { _stepEquipments :: Set Equipment }
+  deriving (Eq, Show)
+
+newtype Circuit = Circuit { _circuitSteps :: [Step] }
+  deriving (Eq, Show)
+
+data GeneratedCircuit = GeneratedCircuit
+  { _circuit :: Circuit
+  , _rounds :: NonEmpty (NonEmpty Exercise)
+  } deriving (Eq)
+
+instance Show GeneratedCircuit where
+  show gc = 
+    let
+      fill :: Int -> String -> String
+      fill x st = replicate x ' ' <> st
+      showRounds :: [(Int, [Exercise])] -> String
+      showRounds rs =
+        unlines
+          $ map (\(roundNb, exs) -> showRound roundNb (zip [1..] exs)) rs
+      showRound :: Int -> [(Int, Exercise)] -> String
+      showRound roundNb exs =
+        "Round " <> show roundNb <> ": \n" <> showedExercises
+        where
+          showedExercises = unlines $ map (fill 2 . uncurry showExercise) exs
+      showExercise :: Int -> Exercise -> String
+      showExercise nbExercise e =
+        "Exercise " <> show nbExercise <> ": " <> Text.unpack (_exerciseName e)
+      rounds :: [(Int, [Exercise])]
+      rounds = zip [1..] . fmap NE.toList . NE.toList $ _rounds gc
+    in showRounds rounds
+
+-- lenses
+makeLenses ''Circuit
+makeLenses ''Exercise
+makeLenses ''Step
+
+allEquipments :: [Equipment]
+allEquipments = [minBound..maxBound]
 
 -- | TODO: all of this could be done automatically from a CSV file or something
 --   might be something to change someday
@@ -80,38 +125,6 @@ allExercises = Set.fromList
   , Exercise { _exerciseName = "Squat Jumps", _exerciseEquipments = Set.empty }
   , Exercise { _exerciseName = "Standups", _exerciseEquipments = Set.empty }
   ]
-
-newtype Step = Step { _stepEquipments :: Set Equipment }
-  deriving (Eq, Show)
-
-newtype Circuit = Circuit { _circuitSteps :: [Step] }
-  deriving (Eq, Show)
-
-data GeneratedCircuit = GeneratedCircuit
-  { _circuit :: Circuit
-  , _rounds :: NonEmpty (NonEmpty Exercise)
-  } deriving (Eq)
-
-instance Show GeneratedCircuit where
-  show gc = 
-    let
-      fill :: Int -> String -> String
-      fill x st = replicate x ' ' <> st
-      showRounds :: [(Int, [Exercise])] -> String
-      showRounds rs =
-        unlines
-          $ map (\(roundNb, exs) -> showRound roundNb (zip [1..] exs)) rs
-      showRound :: Int -> [(Int, Exercise)] -> String
-      showRound roundNb exs =
-        "Round " <> show roundNb <> ": \n" <> showedExercises
-        where
-          showedExercises = unlines $ map (fill 2 . uncurry showExercise) exs
-      showExercise :: Int -> Exercise -> String
-      showExercise nbExercise e =
-        "Exercise " <> show nbExercise <> ": " <> Text.unpack (_exerciseName e)
-      rounds :: [(Int, [Exercise])]
-      rounds = zip [1..] . fmap NE.toList . NE.toList $ _rounds gc
-    in showRounds rounds
 
 -- | Get the total number of exercises from a generated circuit
 nbPickedExercises :: GeneratedCircuit -> Int

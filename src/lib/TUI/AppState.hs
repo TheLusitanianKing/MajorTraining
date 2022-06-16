@@ -1,13 +1,23 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module TUI.AppState
-  ( AppState(..)
+  ( AppState
   , Name
   , initialAppState
   , validNumberOfSteps
+  , hasBeenInterrupted
+  , getCircuit
+  -- lenses
+  , apsCircuit
+  , apsFocusedStepIndex
+  , apsFocusedEquipment
+  , apsInterrupted
   )
 where
 
 
-import Model (Circuit(..), Equipment(..), Step(..),  allEquipments)
+import Control.Lens (makeLenses, view)
+import Model (Circuit(..), Equipment(..), Step(..),  allEquipments, circuitSteps)
 
 import qualified Brick.Focus as F
 import qualified Data.Set as Set
@@ -23,6 +33,8 @@ data AppState = AppState
   , _apsInterrupted      :: Bool
   }
 
+makeLenses ''AppState
+
 instance Show AppState where
   show st = "AppState Circuit: " <> show (_apsCircuit st)
 
@@ -36,10 +48,16 @@ initialAppState initialNumberOfSteps = AppState
   }
   where
     circuit = Circuit $ replicate initialNumberOfSteps (Step Set.empty)
-    nbSteps = length . _circuitSteps $ circuit
+    nbSteps = length $ view circuitSteps circuit
 
 -- | The maximum number of steps the circuit can have
 --   only present for rendering limits
 -- TODO: might be nice to avoid such limits, modifying the way the steps are presented now
 validNumberOfSteps :: Int -> Bool
 validNumberOfSteps x = 1 <= x && x <= 5
+
+hasBeenInterrupted :: AppState -> Bool
+hasBeenInterrupted = view apsInterrupted 
+
+getCircuit :: AppState -> Circuit
+getCircuit = view apsCircuit

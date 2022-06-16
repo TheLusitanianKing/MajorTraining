@@ -1,9 +1,10 @@
 module TUI.Events (appEvent) where
 
 
+import Control.Lens (over, set, view)
 import Data.Maybe (fromMaybe)
-import Model (Circuit(..), Equipment(..), Step(..))
-import TUI.AppState (AppState(..), Name, validNumberOfSteps)
+import Model (Circuit(..), Equipment(..), Step(..), circuitSteps, stepEquipments)
+import TUI.AppState (AppState, Name, apsCircuit, apsFocusedEquipment, apsFocusedStepIndex, apsInterrupted, validNumberOfSteps)
 
 import qualified Brick.Focus  as F
 import qualified Brick.Main   as M
@@ -32,7 +33,7 @@ type EventHandler = AppState -> T.EventM Name (T.Next AppState)
 
 -- | When the user quits the app
 interruptEvent :: EventHandler
-interruptEvent st = M.halt $ st { _apsInterrupted = True }
+interruptEvent = M.halt . set apsInterrupted True
 
 -- | When the user wants to generate the circuit training
 generateEvent :: EventHandler
@@ -40,39 +41,35 @@ generateEvent = M.halt
 
 -- | When the user wants to go to the previous equipment
 prevEquipmentEvent :: EventHandler
-prevEquipmentEvent st = M.continue $
-  st { _apsFocusedEquipment = F.focusPrev (_apsFocusedEquipment st) }
+prevEquipmentEvent = M.continue . over apsFocusedEquipment F.focusPrev
 
 -- | When the user wants to go to the next equipment
 nextEquipmentEvent :: EventHandler
-nextEquipmentEvent st = M.continue $
-  st { _apsFocusedEquipment = F.focusNext (_apsFocusedEquipment st) }
+nextEquipmentEvent = M.continue . over apsFocusedEquipment F.focusNext
 
 -- | When the user wants to go to the previous step
 prevStepEvent :: EventHandler
-prevStepEvent st = M.continue $
-  st { _apsFocusedStepIndex = F.focusPrev (_apsFocusedStepIndex st) }
+prevStepEvent = M.continue . over apsFocusedStepIndex F.focusPrev
 
 -- | When the user wants to go to the next step
 nextStepEvent :: EventHandler
-nextStepEvent st = M.continue $
-  st { _apsFocusedStepIndex = F.focusNext (_apsFocusedStepIndex st) }
+nextStepEvent = M.continue . over apsFocusedStepIndex F.focusNext
 
 -- | When the user selects (or deselects) the currently focused equipment
 --   of the currently focused step
--- TODO: to be improved with lenses
 selectEvent :: EventHandler
-selectEvent st = M.continue $
-  let
-    focusedEquipment = F.focusGetCurrent (_apsFocusedEquipment st)
-    stepIndex = F.focusGetCurrent (_apsFocusedStepIndex st)
-    circuit' :: Circuit -> Maybe Int -> Maybe Equipment -> Circuit
-    circuit' original Nothing _ = original
-    circuit' original _ Nothing = original
-    circuit' original (Just i) (Just eq) =
-      original { _circuitSteps = steps' (_circuitSteps original) i eq }
-    steps' :: [Step] -> Int -> Equipment -> [Step]
-    steps' steps i eq = helper [] steps 0
+selectEvent st =
+  M.continue $ over apsCircuit (circuit' stepIndex focusedEquipment) st
+  where
+    focusedEquipment = F.focusGetCurrent $ view apsFocusedEquipment st
+    stepIndex = F.focusGetCurrent $ view apsFocusedStepIndex st
+    circuit' :: Maybe Int -> Maybe Equipment -> Circuit -> Circuit
+    circuit' Nothing _ original = original
+    circuit' _ Nothing original = original
+    circuit' (Just i) (Just eq) original =
+      over circuitSteps (steps' i eq) original
+    steps' :: Int -> Equipment -> [Step] -> [Step]
+    steps' i eq steps = helper [] steps 0
       where
         helper acc [] _ = reverse acc
         helper acc (x:xs) ci
@@ -80,41 +77,36 @@ selectEvent st = M.continue $
           | otherwise = helper (x:acc) xs (ci + 1)
     step' :: Step -> Equipment -> Step
     step' step eq
-      | eq `Set.member` _stepEquipments step =
-        step { _stepEquipments = Set.delete eq (_stepEquipments step) }
-      | otherwise =
-        step { _stepEquipments = Set.insert eq (_stepEquipments step) }
-  in st { _apsCircuit = circuit' (_apsCircuit st) stepIndex focusedEquipment }
+      | eq `Set.member` view stepEquipments step =
+        over stepEquipments (Set.delete eq) step
+      | otherwise = over stepEquipments (Set.insert eq) step
 
 -- | When the user wants to add a new step
 addStepEvent :: EventHandler
 addStepEvent st
-  | not . validNumberOfSteps $ length (_circuitSteps $ _apsCircuit st) + 1 =
+  | not . validNumberOfSteps $ length (view (apsCircuit . circuitSteps) st) + 1 =
     M.continue st
   | otherwise = M.continue $
     let
-      circuit = _apsCircuit st
-      circuit' = circuit { _circuitSteps = _circuitSteps circuit ++ [Step Set.empty] }
-      currentStep = fromMaybe 0 $ F.focusGetCurrent (_apsFocusedStepIndex st)
-      nbSteps' = length $ _circuitSteps circuit'
-    in st
-        { _apsCircuit = circuit'
-        , _apsFocusedStepIndex = F.focusSetCurrent currentStep $ F.focusRing [0..nbSteps' - 1]
-        }
+      circuit' = over circuitSteps (++ [Step Set.empty]) $ view apsCircuit st
+      nbSteps' = length $ view circuitSteps circuit'
+    in
+      -- TODO: could using some kind of traversal avoid me using this weird function
+      -- as both modified fields are dependant from each other
+      over apsFocusedStepIndex ((\cs -> F.focusSetCurrent cs $ F.focusRing [0..nbSteps' - 1]) . fromMaybe 0 . F.focusGetCurrent) .
+      set apsCircuit circuit' $ st
 
 -- | When the user wants to remove the currently focused step
 removeStepEvent :: EventHandler
 removeStepEvent st
-  | length (_circuitSteps $ _apsCircuit st) == 1 = M.continue st
+  | length (view (apsCircuit . circuitSteps) st) == 1 = M.continue st
   | otherwise = M.continue $
     let
       removeStepAt :: Int -> [a] -> [a]
       removeStepAt i xs = take i xs ++ drop (i+1) xs
-      circuit = _apsCircuit st
-      currentStep = fromMaybe 0 $ F.focusGetCurrent (_apsFocusedStepIndex st)
-      circuit' = circuit { _circuitSteps = removeStepAt currentStep (_circuitSteps circuit) }
-      nbSteps' = length $ _circuitSteps circuit'
-    in st
-        { _apsCircuit = circuit'
-        , _apsFocusedStepIndex = F.focusRing [0..nbSteps' - 1]
-        }
+      currentStep = fromMaybe 0 $ F.focusGetCurrent (view apsFocusedStepIndex st)
+      circuit' = over circuitSteps (removeStepAt currentStep) $ view apsCircuit st
+      nbSteps' = length $ view circuitSteps circuit'
+    in
+      -- TODO: same than above: both set operation are dependant and the way I did it is really not great
+      set apsFocusedStepIndex (F.focusRing [0..nbSteps' - 1]) . set apsCircuit circuit' $ st

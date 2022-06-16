@@ -1,7 +1,7 @@
 module ModelSpec (spec) where
 
 
-import Model (Circuit(..), Exercise(..), GeneratedCircuit(..), nbPickedExercises)
+import Model (Circuit(..), Exercise, GeneratedCircuit(..), nbPickedExercises)
 import Test.Hspec
 
 import qualified Data.List.NonEmpty as NE

@@ -1,10 +1,11 @@
 module GenerationSpec (spec) where
 
 
+import Control.Lens (view)
 import Data.Set (Set)
 import Data.Either (isLeft, isRight)
 import Model
-  (Circuit(..), Exercise(..), GeneratedCircuit(..), Step(..), allExercises, nbPickedExercises)
+  (Circuit(..), Exercise, GeneratedCircuit(..), Step(..), allExercises, nbPickedExercises, exerciseEquipments)
 import Generation (generateCircuit)
 import System.Random (StdGen, mkStdGen)
 import Test.Hspec
@@ -42,13 +43,12 @@ spec = do
             else assertBool "" True
 
 circuitWithEmptySteps :: Int -> Circuit
-circuitWithEmptySteps nbSteps = Circuit
-  { _circuitSteps = replicate nbSteps sampleStep } 
+circuitWithEmptySteps nbSteps = Circuit $ replicate nbSteps sampleStep
   where
     sampleStep = Step $ Set.fromList []
 
 noEquipmentExercises :: Set Exercise
-noEquipmentExercises = Set.filter (Set.null . _exerciseEquipments) allExercises
+noEquipmentExercises = Set.filter (Set.null . view exerciseEquipments) allExercises
 
 gen :: StdGen
 gen = mkStdGen 1
