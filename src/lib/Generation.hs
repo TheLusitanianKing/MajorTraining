@@ -1,7 +1,7 @@
 module Generation (generateCircuit) where
 
 
-import Control.Lens (view)
+import Control.Lens ((^.))
 import Data.List.NonEmpty (NonEmpty)
 import Data.Set (Set)
 import Model (Circuit(..), Exercise, GeneratedCircuit(..), Step (..), circuitSteps, exerciseEquipments, stepEquipments)
@@ -23,7 +23,7 @@ generateCircuit gen exs nbRounds c
   | otherwise = helper [] [] exs sts gen nbRounds
     where
       sts :: [Step]
-      sts = view circuitSteps c
+      sts = c ^. circuitSteps
       -- | tail-recursive helper for generating
       helper :: [NonEmpty Exercise] -- ^ the accumulator
              -> [Exercise]          -- ^ the exercises of the current round
@@ -56,4 +56,5 @@ generateCircuit gen exs nbRounds c
 -- or, should it accept whatever exercise that is possible to be done in the step?
 -- => should the app always give an exercise using the equipments of the step or not?
 stepCanHaveThisExercise :: Step -> Exercise -> Bool
-stepCanHaveThisExercise s e = view exerciseEquipments e `Set.isSubsetOf` view stepEquipments s
+stepCanHaveThisExercise s e =
+  (e ^. exerciseEquipments)  `Set.isSubsetOf` (s ^. stepEquipments)

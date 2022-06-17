@@ -16,7 +16,7 @@ module TUI.AppState
 where
 
 
-import Control.Lens (makeLenses, view)
+import Control.Lens ((^.), makeLenses, view)
 import Model (Circuit(..), Equipment(..), Step(..),  allEquipments, circuitSteps)
 
 import qualified Brick.Focus as F
@@ -48,7 +48,7 @@ initialAppState initialNumberOfSteps = AppState
   }
   where
     circuit = Circuit $ replicate initialNumberOfSteps (Step Set.empty)
-    nbSteps = length $ view circuitSteps circuit
+    nbSteps = length $ circuit ^. circuitSteps 
 
 -- | The maximum number of steps the circuit can have
 --   only present for rendering limits
