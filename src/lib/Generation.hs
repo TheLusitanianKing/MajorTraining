@@ -12,10 +12,12 @@ import qualified Data.Set as Set
 
 
 -- | Generate a circuit as the function clearly says
+--   A generated circuit is a circuit and exercises for each step of the circuit
+--   for one or multiple rounds.
 generateCircuit :: StdGen       -- ^ the random generator
                 -> Set Exercise -- ^ the set of exercises to be used in the generated rounds
                 -> Int          -- ^ the number of rounds wanted
-                -> Circuit      -- ^ the circuit
+                -> Circuit      -- ^ the circuit (it's just a list of steps with equipments or not)
                 -- ^ either fails with an explicit error message or returns the generated circuit
                 -> Either String GeneratedCircuit
 generateCircuit gen exs nbRounds c
@@ -34,10 +36,10 @@ generateCircuit gen exs nbRounds c
              -> Either String GeneratedCircuit
       helper acc tmp es steps g n
         | n == 0 && null acc = Left "No rounds generated."
-        | n == 0 = Right $ GeneratedCircuit c $ NE.fromList (reverse acc)
-        | Set.null es = Left "Not enough exercises to generate the circuit."
-        | null steps = helper (NE.fromList (reverse tmp):acc) [] es sts g (n - 1)
-        | nbValidExs == 0 = Left "Not enough exercises to generate the circuit."
+        | n == 0             = Right $ GeneratedCircuit c $ NE.fromList (reverse acc)
+        | Set.null es        = Left "Not enough exercises to generate the circuit."
+        | null steps         = helper (NE.fromList (reverse tmp):acc) [] es sts g (n - 1)
+        | nbValidExs == 0    = Left "Not enough exercises to generate the circuit."
         | otherwise =
           let
             (i, g') = randomR (0, nbValidExs - 1) g

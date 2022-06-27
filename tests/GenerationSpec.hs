@@ -19,18 +19,18 @@ spec :: Spec
 spec = do
   describe "Circuit generation." $ do
     prop "Check it fails if there is no exercises to generate from." $ do
-      \n -> isLeft (generateCircuit gen Set.empty n (circuitWithEmptySteps 3)) `shouldBe` True
+      \n -> isLeft (generateCircuit gen Set.empty n $ circuitWithEmptySteps 3) `shouldBe` True
     
     it "8 exercises to generate 3 rounds in a 3 steps circuit: should fail." $
       let
         littleSetOfExercises = Set.fromList . take 8 . Set.toList $ noEquipmentExercises
-        generatedCircuit = generateCircuit gen littleSetOfExercises 3 (circuitWithEmptySteps 3)
+        generatedCircuit = generateCircuit gen littleSetOfExercises 3 $ circuitWithEmptySteps 3
       in isLeft generatedCircuit `shouldBe` True
     
     it "10 exercises to generate 3 rounds in a 3 steps circuit: should be fine."  $
       let
         littleSetOfExercises = Set.fromList . take 10 . Set.toList $ noEquipmentExercises
-        generatedCircuit = generateCircuit gen littleSetOfExercises 3 (circuitWithEmptySteps 3)
+        generatedCircuit = generateCircuit gen littleSetOfExercises 3 $ circuitWithEmptySteps 3
       in isRight generatedCircuit `shouldBe` True
     
     describe "Generating X rounds on the Y steps circuit." $ do
